@@ -2,9 +2,9 @@ import functools
 import re
 from typing import Tuple
 
-STR = 'abcdefghijklmnopqrstuvwxyz'
-M = len(STR)
-L2IX = { k: v for k, v in zip('abcdefghijklmnopqrstuvwxyz', range(M)) }
+ALPHA = 'abcdefghijklmnopqrstuvwxyz'
+M = len(ALPHA)
+L2IX = { k: v for k, v in zip(ALPHA, range(M)) }
 IX2L = { v: k for k, v in L2IX.items() }
 NON_ALPHA_REXP = r'[^a-zA-Z0-9]'
 GRP_SIZE = 5 + 1 # + 1 for space
