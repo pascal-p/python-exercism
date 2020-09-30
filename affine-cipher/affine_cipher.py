@@ -2,15 +2,11 @@ import functools
 import re
 from typing import Tuple
 
-M = 26
-
-L2IX = { k: v for k, v in zip(['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-                               'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'], range(0, M)) }
-
+STR = 'abcdefghijklmnopqrstuvwxyz'
+M = len(STR)
+L2IX = { k: v for k, v in zip('abcdefghijklmnopqrstuvwxyz', range(M)) }
 IX2L = { v: k for k, v in L2IX.items() }
-
 NON_ALPHA_REXP = r'[^a-zA-Z0-9]'
-
 GRP_SIZE = 5 + 1 # + 1 for space
 
 
