@@ -63,6 +63,12 @@ class AffineCipherTest(unittest.TestCase):
             "swxtj npvyk lruol iejdc blaxk swxmh qzglf",
         )
 
+    def test_encode_with_no_spaces_in_input2(self):
+        self.assertEqual(
+            encode("tgxknetbyjznxaejgtnejoozgrnexgj", 23, 31),
+            "anobs tacle isoft enast eppin gston e",
+        )
+
     def test_encode_lon_str(self):
         self.assertEqual(
             encode(LongStr, 17, 19),
@@ -102,10 +108,16 @@ class AffineCipherTest(unittest.TestCase):
             "thequickbrownfoxjumpsoverthelazydog",
         )
 
-    def test_decode_with_no_spaces_in_input(self):
+    def test_decode_with_no_spaces_in_input1(self):
         self.assertEqual(
             decode("swxtjnpvyklruoliejdcblaxkswxmhqzglf", 17, 33),
             "thequickbrownfoxjumpsoverthelazydog",
+        )
+
+    def test_decode_with_no_spaces_in_input2(self):
+        self.assertEqual(
+            decode("AnObstacleIsOftenASteppingStone", 23, 31),
+            "tgxknetbyjznxaejgtnejoozgrnexgj",
         )
 
     def test_decode_with_too_many_spaces(self):

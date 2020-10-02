@@ -18,7 +18,7 @@ def check_input(fn):
 class Cipher:
     _ALPHA = "abcdefghijklmnopqrstuvwxyz"
     LEN_ALPHA = len(_ALPHA)
-    HSH     = { k: v for k, v in zip(list(_ALPHA), range(LEN_ALPHA)) }
+    HSH     = { k: v for k, v in zip(_ALPHA, range(LEN_ALPHA)) }
     REV_HSH = { v: k for k, v in HSH.items() }
 
     def __init__(self, key=None):
