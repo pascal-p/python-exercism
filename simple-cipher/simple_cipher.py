@@ -39,6 +39,15 @@ class Cipher:
         return self._transcode(text, __class__._rev_trans_fn)
 
     def _transcode(self, msg, fn):
+        return ''.join([
+            __class__.REV_HSH[fn(self, *tup)] \
+            for tup in [
+                    (ix, w) for ix, w in enumerate(msg.lower()) if re.match(r'[a-z]', w)
+            ]
+        ])
+
+    def _transcode_fp(self, msg, fn):
+        "FP version"
         return ''.join(
             map(lambda tup: __class__.REV_HSH[fn(self, *tup)],
                 filter(lambda tup: re.match(r'[a-z]', tup[1]),
