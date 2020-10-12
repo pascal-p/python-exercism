@@ -1,32 +1,55 @@
 class Node:
     def __init__(self, value, succeeding=None, previous=None):
-        self.value = value
-        self.succ = succeeding
-        self.prev = previous
+        self._value = value
+        self._succ = succeeding
+        self._prev = previous
+
+    def value(self):
+        return self._value
+
+    def succ(self):
+        return self._succ
+
+    def prev(self):
+        return self._prev
 
     def __str__(self):
-         return f"{self.value}"
+         return f"{self._value}"
+
+
+class EmptyListException(Exception):
+    pass
 
 
 class LinkedList:
     def __init__(self):
-        self.head = None
-        self.tail = None
-        self.length = 0
-        self.curr = None
+        self._head = None
+        self._tail = None
+        self._length = 0
+        self._curr = None
+
+    def head(self):
+        if self.is_empty():
+            raise EmptyListException()
+        return self._head
+
+    def tail(self):
+        if self.is_empty():
+            raise EmptyListException()
+        return self._tail
 
     def unshift(self, elem):
         """
         insert elem at the front
         """
         node = Node(elem)
-        node.succ = self.head
-        if self.head != None:
-            self.head.prev = node
+        node._succ = self._head
+        if self._head != None:
+            self._head._prev = node
         else:
-            self.tail = node
-        self.head = node
-        self.length += 1
+            self._tail = node
+        self._head = node
+        self._length += 1
         return self
 
     def shift(self):
@@ -34,30 +57,31 @@ class LinkedList:
         remove value at front
         """
         if self.is_empty():
-            raise ValueError("Empty list")
+            raise EmptyListException()
 
-        elem = self.head.value
-        self.length -= 1
+        node = self._head
+        self._length -= 1
         # remove last element?
-        if self.length == 0:
-            self.head = self.tail = None
+        if self._length == 0:
+            self._head = self._tail = None
         else:
-            self.head = self.head.succ
-            self.head.prev = None
-        return elem
+            self._head = self._head._succ
+            self._head._prev = None
+        node._succ = node._prev = None
+        return node._value
 
     def push(self, elem):
         """
         insert value at the back
         """
         node = Node(elem)
-        node.prev = self.tail
-        if self.tail != None:
-            self.tail.succ = node
+        node._prev = self._tail
+        if self._tail != None:
+            self._tail._succ = node
         else:
-            self.head = node
-        self.tail = node
-        self.length += 1
+            self._head = node
+        self._tail = node
+        self._length += 1
         return self
 
     def pop(self):
@@ -65,18 +89,19 @@ class LinkedList:
         remove value at the back
         """
         if self.is_empty():
-            raise ValueError("Empty list")
-        elem = self.tail.value
-        self.length -= 1
-        if self.length == 0:
-             self.head = self.tail = None
+            raise EmptyListException()
+        node = self._tail
+        self._length -= 1
+        if self._length == 0:
+             self._head = self._tail = None
         else:
-            self.tail = self.tail.prev
-            self.tail.succ = None
-        return elem
+            self._tail = self._tail._prev
+            self._tail._succ = None
+        node._succ = node._prev = None
+        return node._value
 
     def is_empty(self):
-        return self.length == 0
+        return self._length == 0
 
     #
     # iterator
@@ -85,34 +110,43 @@ class LinkedList:
         return self
 
     def __next__(self):
+        """
+        'natural' order from head to tail
+        """
         if self.is_empty(): raise StopIteration()
 
-        if self.curr != self.tail:
-            if self.curr == None:
-                self.curr = self.head
-            else:
-                self.curr = self.curr.succ
-            return self.curr.value
+        if self._curr != self._tail:
+            self._curr = self._head if self._curr == None else self._curr._succ
+            return self._curr._value
         else:
             raise StopIteration()
 
     def next(self):
         return self.__next__()
 
+    def __reversed__(self):
+        """
+        reverse order from tail to head...
+        """
+        if self.is_empty(): raise StopIteration()
+
+        if self._curr != self._head:
+            self._curr = self._tail if self._curr == None else self._curr._prev
+            return self._curr._value
+        else:
+            raise StopIteration()
     #
     # len
     #
     def __len__(self):
-        return self.length
+        return self._length
 
     def __str__(self):
-        if self.head == None:
-            return ''
-
-        plst = self.head
+        if self._head == None: return ''
+        plst = self._head
         l = []
         while True:
-            l.append(plst.value)
-            plst = plst.succ
+            l.append(plst._value)
+            plst = plst._succ
             if plst == None: break
         return ", ".join([str(e) for e in l])
