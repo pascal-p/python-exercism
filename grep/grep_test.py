@@ -77,11 +77,11 @@ class GrepTest(unittest.TestCase):
             "With loss of Eden, till one greater Man\n",
         )
 
-    # def test_one_file_one_match_multiple_flags(self, mock_file, mock_open):
-    #     self.assertMultiLineEqual(
-    #         grep("OF ATREUS, Agamemnon, KIng of MEN.", "-n -i -x", ["iliad.txt"]),
-    #         "9:Of Atreus, Agamemnon, King of men.\n",
-    #     )
+    def test_one_file_one_match_multiple_flags(self, mock_file, mock_open):
+        self.assertMultiLineEqual(
+            grep("OF ATREUS, Agamemnon, KIng of MEN.", "-n -i -x", ["iliad.txt"]),
+            "9:Of Atreus, Agamemnon, King of men.\n",
+        )
 
     def test_one_file_several_matches_no_flags(self, mock_file, mock_open):
         self.assertMultiLineEqual(
@@ -221,15 +221,15 @@ class GrepTest(unittest.TestCase):
             "midsummer-night.txt:But I beseech your grace that I may know\n",
         )
 
-    # def test_multiple_files_one_match_multiple_flags(self, mock_file, mock_open):
-    #     self.assertMultiLineEqual(
-    #         grep(
-    #             "WITH LOSS OF EDEN, TILL ONE GREATER MAN",
-    #             "-n -i -x",
-    #             ["iliad.txt", "midsummer-night.txt", "paradise-lost.txt"],
-    #         ),
-    #         "paradise-lost.txt:4:With loss of Eden, till one greater Man\n",
-    #     )
+    def test_multiple_files_one_match_multiple_flags(self, mock_file, mock_open):
+        self.assertMultiLineEqual(
+            grep(
+                "WITH LOSS OF EDEN, TILL ONE GREATER MAN",
+                "-n -i -x",
+                ["iliad.txt", "midsummer-night.txt", "paradise-lost.txt"],
+            ),
+            "paradise-lost.txt:4:With loss of Eden, till one greater Man\n",
+        )
 
     def test_multiple_files_no_matches_various_flags(self, mock_file, mock_open):
         self.assertMultiLineEqual(
