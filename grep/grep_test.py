@@ -16,6 +16,7 @@ To dogs and to all ravening fowls a prey,
 When fierce dispute had separated once
 The noble Chief Achilles from the son
 Of Atreus, Agamemnon, King of men.\n""",
+
     "midsummer-night.txt": """I do entreat your grace to pardon me.
 I know not by what power I am made bold,
 Nor how it may concern my modesty,
@@ -23,6 +24,7 @@ In such a presence here to plead my thoughts;
 But I beseech your grace that I may know
 The worst that may befall me in this case,
 If I refuse to wed Demetrius.\n""",
+
     "paradise-lost.txt": """Of Mans First Disobedience, and the Fruit
 Of that Forbidden Tree, whose mortal tast
 Brought Death into the World, and all our woe,
@@ -287,6 +289,61 @@ class GrepTest(unittest.TestCase):
             "paradise-lost.txt:That Shepherd, who first taught the chosen Seed\n",
         )
 
+    def test_regexp_search_word_starting_with_A(self, mock_file, mock_open):
+        self.assertMultiLineEqual(
+            grep(
+                r"\bA[\S]+\b",    # word starting with uppercase A
+                "-e",
+                ["iliad.txt"]     # , "midsummer-night.txt", "paradise-lost.txt"],
+            ),
+            "Achilles sing, O Goddess! Peleus' son;\n"
+            "Caused to Achaia's host, sent many a soul\n"
+            "Illustrious into Ades premature,\n"
+            "And Heroes gave (so stood the will of Jove)\n"
+            "The noble Chief Achilles from the son\n"
+            "Of Atreus, Agamemnon, King of men.\n"
+        )
 
+
+    def test_regexp_search_word_starting_with_lowercase_letter(self, mock_file, mock_open):
+        self.assertMultiLineEqual(
+            grep(
+                r"\bw[\S]+\b",  # word starting with lowercase letter w
+                "-e",
+                ["iliad.txt"]
+            ),
+            "His wrath pernicious, who ten thousand woes\n"
+            "And Heroes gave (so stood the will of Jove)\n"
+        )
+
+        
+    def test_regexp_search_word_how_who(self, mock_file, mock_open):
+        self.assertMultiLineEqual(
+            grep(
+                r"\bhow\b|\bwho\b",
+                "-e -n",
+                ["iliad.txt", "midsummer-night.txt", "paradise-lost.txt"],
+            ),
+            "iliad.txt:2:His wrath pernicious, who ten thousand woes\n"
+            "midsummer-night.txt:3:Nor how it may concern my modesty,\n"
+            "paradise-lost.txt:8:That Shepherd, who first taught the chosen Seed\n"
+        )
+        #             "paradise-lost.txt:2:Of that Forbidden Tree, whose mortal tast\n"
+        
+    def test_regexp_search_word_how_who_prefix(self, mock_file, mock_open):
+        # using who as prefix => match whose
+        self.assertMultiLineEqual(
+            grep(
+                r"\bhow\b|\bwho\S*\b",
+                "-e -n",
+                ["iliad.txt", "midsummer-night.txt", "paradise-lost.txt"],
+            ),
+            "iliad.txt:2:His wrath pernicious, who ten thousand woes\n"
+            "midsummer-night.txt:3:Nor how it may concern my modesty,\n"
+            "paradise-lost.txt:2:Of that Forbidden Tree, whose mortal tast\n"
+            "paradise-lost.txt:8:That Shepherd, who first taught the chosen Seed\n"
+        )
+
+        
 if __name__ == "__main__":
     unittest.main()
