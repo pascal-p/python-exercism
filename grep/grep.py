@@ -21,9 +21,9 @@ def grep(pattern: str, flags: str, files: List[str]) -> str:
     lflags = list(set(re.split(r"\s+",
                                flags)))  # eliminate duplicate
 
+    proc_fn = process_file
     if '-e' in lflags:
         pattern = re.compile(pattern)
-        proc_fn = eprocess_file
 
     else:
         if '-i' in lflags:
@@ -32,12 +32,22 @@ def grep(pattern: str, flags: str, files: List[str]) -> str:
         if '-x' in lflags:
             pattern = pattern + "\n" # for full match
 
-        proc_fn = process_file
+    ## Need to define the matcher function =>  match_fn
+    if '-e' in flags:
+        RE_OPTS = 0
+        if '-i' in flags: RE_OPTS = re.IGNORECASE
+        match_fn = lambda pattern, line: re.search(pattern, line, flags=RE_OPTS)
+
+    else:
+        if '-i' in flags:
+            match_fn = lambda pattern, line: line.lower().find(pattern) != -1
+        else:
+            match_fn = lambda pattern, line: line.find(pattern) != -1
 
     if len(files) > 1:
         matches = {f: [] for f in files}
         for f in files:
-            proc_fn(pattern, lflags, f, matches[f])
+            proc_fn(pattern, match_fn, lflags, f, matches[f])
 
         if '-l' in lflags:
             res = [
@@ -52,51 +62,25 @@ def grep(pattern: str, flags: str, files: List[str]) -> str:
 
     else:
         matches = []
-        proc_fn(pattern, lflags, files[0], matches)
+        proc_fn(pattern, match_fn, lflags, files[0], matches)
         return ''.join(matches)
 
 
-def eprocess_file(pattern: str, flags: List[str], ifile: str, matches: List[str]):
-    assert type(pattern) == re.Pattern
-
+def process_file(pattern: str, match_fn, flags: List[str], ifile: str,
+                 matches: List[str]):
     args = [flags, ifile, matches]
-    RE_OPTS = 0
-    if '-i' in flags: RE_OPTS = re.IGNORECASE;
-
     with open(ifile, "r") as fh:
         for ix, line in enumerate(fh, 1):
 
-            if re.search(pattern, line, flags=RE_OPTS):
+            if match_fn(pattern, line):
                 if '-v' in flags: continue
-
                 can_stop = add_line(ix, line, *args)
                 if can_stop: break
 
-            else:
-                if '-v' in flags:
-                    can_stop = add_line(ix, line, *args)
-                    if can_stop: break
-
-    return
-
-def process_file(pattern: str, flags: List[str], ifile: str, matches: List[str]):
-    args = [flags, ifile, matches]
-    ##
-    with open(ifile, "r") as fh:
-        for ix, line in enumerate(fh, 1):
-            cline = line.lower() if '-i' in flags else line
-
-            if cline.find(pattern) == -1:  # no match
-                if '-v' in flags:
-                    can_stop = add_line(ix, line, *args)
-                    if can_stop: break
-            else:                          # match
-                if '-v' in flags: continue
-
+            elif '-v' in flags:        # No match and -v option
                 can_stop = add_line(ix, line, *args)
                 if can_stop: break
     return
-
 
 def add_line(ix: int, line: str, flags: List[str], ifile: str,
              matches: List[str]):

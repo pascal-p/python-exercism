@@ -328,7 +328,6 @@ class GrepTest(unittest.TestCase):
             "midsummer-night.txt:3:Nor how it may concern my modesty,\n"
             "paradise-lost.txt:8:That Shepherd, who first taught the chosen Seed\n"
         )
-        #             "paradise-lost.txt:2:Of that Forbidden Tree, whose mortal tast\n"
         
     def test_regexp_search_word_how_who_prefix(self, mock_file, mock_open):
         # using who as prefix => match whose
@@ -342,6 +341,19 @@ class GrepTest(unittest.TestCase):
             "midsummer-night.txt:3:Nor how it may concern my modesty,\n"
             "paradise-lost.txt:2:Of that Forbidden Tree, whose mortal tast\n"
             "paradise-lost.txt:8:That Shepherd, who first taught the chosen Seed\n"
+        )
+
+    def test_regexp_search_word_how_who_prefix_file_only(self, mock_file, mock_open):
+        # using who as prefix => match whose
+        self.assertMultiLineEqual(
+            grep(
+                r"\bhow\b|\bwho\S*\b",
+                "-e -n -l",
+                ["iliad.txt", "midsummer-night.txt", "paradise-lost.txt"],
+            ),
+            "iliad.txt\n"
+            "midsummer-night.txt\n"
+            "paradise-lost.txt\n",
         )
 
         
