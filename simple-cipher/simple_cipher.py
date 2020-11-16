@@ -42,7 +42,7 @@ class Cipher:
         return ''.join([
             __class__.REV_HSH[fn(self, *tup)] \
             for tup in [
-                    (ix, w) for ix, w in enumerate(msg.lower()) if re.match(r'[a-z]', w)
+                (ix, w) for ix, w in enumerate(msg.lower()) if re.match(r'[a-z]', w)
             ]
         ])
 
@@ -64,7 +64,7 @@ class Cipher:
     @staticmethod
     def _rev_trans_fn(this, ix, ch):
         jx = __class__.HSH[ch] - __class__.HSH[this.key[ix % this.klen]]
-        jx = __class__.LEN_ALPHA + jx if jx < 0 else jx
+        jx %= __class__.LEN_ALPHA # jx can be < 0
         return jx % __class__.LEN_ALPHA
 
     @staticmethod
