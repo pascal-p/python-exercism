@@ -6,6 +6,17 @@ from rail_fence_cipher import decode, encode
 
 
 class RailFenceCipherTest(unittest.TestCase):
+
+    def test_encode_with_empty_string(self):
+        self.assertEqual(encode('', 2), '')
+
+    def test_encode_with_less_letters_than_rails(self):
+        self.assertEqual(encode('More rails than letters', 24), 'More rails than letters')
+
+    def test_encode_with_one_rail(self):
+        self.assertEqual(encode('One rail, only one rail', 1),
+                         'One rail, only one rail')
+
     def test_encode_with_two_rails(self):
         self.assertMultiLineEqual(encode("XOXOXOXOXOXOXOXOXO", 2), "XXXXXXXXXOOOOOOOOO")
         self.assertMultiLineEqual(encode("FOOBARS", 2), "FOASOBR")
@@ -44,7 +55,7 @@ class RailFenceCipherTest(unittest.TestCase):
             "112358132134558914423337761098715972584418167651094617711286",
         )
 
-    def test_encode_deocde_identity(self):
+    def test_encode_decode_identity(self):
         for msg, rails in [
                 ("XOXOXOXOXOXOXOXOXO", 2),
                 ("WEAREDISCOVEREDFLEEATONCE", 3),

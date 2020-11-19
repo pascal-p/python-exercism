@@ -7,35 +7,39 @@ import functools
 #  - if message contains blank delete/ignore them
 #  - uppercase and remove all punctuation...
 
-NON_LETTERS = r'[^A-Z0-9]+'
+NON_LETTERS = re.compile(r'[^A-Z0-9]+')
 
 ## decorator
 def check_arg(fn):
     @functools.wraps(fn)
     def wrapped_fn(*args, **kwargs):
         (message, rails) = args
+        #
+        if len(message) == 0: return message
+        if rails == 1: return message
         if rails > len(message):
-            raise ValueError('rails should be less than the len of meesage to encode/decode')
-        message = message.upper()
-        p = re.compile(NON_LETTERS)
-        message = p.sub('', message)
-        args = [message, rails, *args[2:]]
+            return message
+            # raise ValueError("rails (length) should be less than message's length to encode/decode")
+        #
+        args = [NON_LETTERS.sub('', message.upper()), rails, *args[2:]]
         return fn(*args, **kwargs)
-
+    #
     return wrapped_fn
 
 @check_arg
 def encode(message: str, rails: int) -> str:
     r = fill(message, rails, defl='.')
+    # print("==> r: ", r)
     ciphered = [
         ch for jx in range(rails) for ch in list(r[jx]) if ch != '.'
     ]
+    # print("==> ciphered: ", ciphered)
     return ''.join(ciphered)
 
 @check_arg
 def decode(encoded_message: str, rails: int) -> str:
-    msg_ph = ''.join(['?'] * len(encoded_message))
-    # 1 - Compute zig-zag wiht placeholder (ph
+    msg_ph = '?' * len(encoded_message) # ''.join(['?'] * len(encoded_message))
+    # 1 - Compute zig-zag with placeholder (ph)
     r = fill(msg_ph, rails, defl='.')
     #
     # 2 - fill place holder
@@ -45,14 +49,9 @@ def decode(encoded_message: str, rails: int) -> str:
             if r[jx][ix] == '?':
                 r[jx][ix] = encoded_message[lix]
                 lix += 1
-                ix += 1
-            else:
-                # find next place holder
-                while ix < len(r[jx]) and r[jx][ix] != '?':
-                    ix += 1
+            ix += 1
         ix = 0
-    for ix in range(rails):
-        print(ix, r[ix])
+    #
     # 3 - construct decoded message
     decoded = []
     # assume all r have same lengths and read column by column
@@ -61,7 +60,7 @@ def decode(encoded_message: str, rails: int) -> str:
             if r[jx][ix] != '.':
                 decoded.append(r[jx][ix])
                 break
-
+    #
     return ''.join(decoded)
 
 def fill(message: str, rails: int, defl='.'):
