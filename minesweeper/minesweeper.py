@@ -14,7 +14,7 @@ def annotate(minefield):
     if all_empty(minefield, nr, nc) or all_stars(minefield, nr, nc):
         return minefield
 
-    check_non_valid_chars(minefield, nr, nc)
+    check_non_valid_chars(minefield)
 
     for r in range(nr):
         line = ''
@@ -39,7 +39,7 @@ def check_same_len_lines(minefield, nc):
     "check if all lines have same length"
     m = list(filter(lambda l: len(l) != nc, minefield))
     if len(m) > 0:
-        raise ValueError("lines must have the same length")
+        raise ValueError("Lines must have the same length")
     return
 
 def all_empty(minefield, nr, nc) -> bool:
@@ -52,12 +52,12 @@ def all_stars(minefield, nr, nc) -> bool:
     m = list(filter(lambda l: l == VALID_CHARS[1] * nc, minefield))
     return len(m) == nr
 
-def check_non_valid_chars(minefield, nr, nc):
-    "check fro invalid chars"
-    for lines in minefield:
-        for ch in lines:
+def check_non_valid_chars(minefield):
+    "check for invalid chars"
+    for line in minefield:
+        for ch in line:
             if not ch in VALID_CHARS:
-                raise ValueError("invalid char found")
+                raise ValueError("Invalid char found")
     return
 
 # return a generator

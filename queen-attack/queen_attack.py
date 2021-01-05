@@ -10,7 +10,7 @@ class Queen:
 
     def can_attack(self, oq):
         if self.get_pos() == oq.get_pos():
-            raise(ValueError("other queen cannot be at the same position"))
+            raise(ValueError("Other queen cannot be at the same position"))
 
         return self.same_row(oq) or self.same_col(oq) or self.same_diag(oq)
 
