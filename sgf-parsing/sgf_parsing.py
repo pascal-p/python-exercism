@@ -50,14 +50,30 @@ class Parser:
         self.props = {}
         self.children = []
 
+    @classmethod
+    def new(cls, input_string:str):
+        if len(input_string) <= 0: raise(ValueError("Empty string"))
+
+        # len(input) > 0
+        if len(input_string) == 1:
+            raise(ValueError("Invalid single character"))
+
+        # len(input) > 1
+        if len(input_string) == 2 and input_string == '()':
+            raise(ValueError("Empty Expression"))
+
+        if input_string[0] != '(' or input_string[-1] != ')':
+            raise(ValueError("Not a proper expression"))
+
+        return __class__(input_string).parse()
+
     def parse(self):
-        assert self.input_string[0] == '(' and self.input_string[-1] == ')'
         ckey, cval = '', ''
         state_changed = False
 
         while True:
             if self.state == 'INIT':
-                self.init_state_fn()
+                self._init_state()
                 if self.state == 'DONE': break
 
             if self.state == 'PREKEY':
@@ -65,7 +81,7 @@ class Parser:
                 if self.ch == EOF:
                     return SgfTree(properties=self.props, children=self.children)
 
-            (ckey, state_changed) = self.pre_key_state_fn(ckey, state_changed)
+            (ckey, state_changed) = self._pre_key_state(ckey, state_changed)
 
             if state_changed:
                 self.next_char()
@@ -74,8 +90,7 @@ class Parser:
                     if self.state == 'DONE': break
                     else: raise(ValueError(f'Unexpected EOF'))
 
-            ckey = self.key_state_fn(ckey)
-
+            ckey = self._key_state(ckey)
             assert self.state == 'PREVALUE'  ## and we have a ckey, now expecting a value (cval)!
 
             if self.ch == '[':
@@ -84,18 +99,20 @@ class Parser:
             else:
                 raise(ValueError(f'Unexpected character'))
 
-            cval = self.value_state_fn(cval)
-
+            cval = self._value_state(cval)
             assert self.state == 'KV_READ'
             (ckey, cval) = self.update_tree(ckey, cval)  ## we have a ckey/cval pair - record it and prep. for next value
-            (state_changed, ckey) = self.dispatch(state_changed, ckey)
+            (state_changed, ckey) = self._dispatch(state_changed, ckey)
             if self.state == 'DONE': break
         ##
         assert self.state == 'DONE'
         sgf = SgfTree(properties=self.props, children=self.children)
         return sgf
 
-    def init_state_fn(self):
+    #
+    # Internal
+    #
+    def _init_state(self):
         self.next_char()
         if self.ch == EOF:
             self.state = 'DONE'
@@ -104,7 +121,7 @@ class Parser:
         if self.ch != ';': raise(ValueError(f'Expected ; - got {self.ch}'))
         self.state = 'PREKEY'
 
-    def pre_key_state_fn(self, ckey, state_changed):
+    def _pre_key_state(self, ckey, state_changed):
         while self.state == 'PREKEY':
             # print(f'\tSTATE: {self.state} / ch: {self.ch} / ix: {self.ix} ==> ckey: {ckey}')
             if 'A' <= self.ch <= 'Z':
@@ -119,7 +136,7 @@ class Parser:
         ##
         return (ckey, state_changed)
 
-    def key_state_fn(self, ckey):
+    def _key_state(self, ckey):
         while self.state == 'KEY':
             # print(f'\tSTATE: {self.state} / ch is: {self.ch} / ix: {self.ix} / key: {ckey}')
             if 'A' <= self.ch <= 'Z':
@@ -132,7 +149,7 @@ class Parser:
         ##
         return ckey
 
-    def value_state_fn(self, cval):
+    def _value_state(self, cval):
         while self.state == 'VALUE':
             # print(f'\tSTATE: {self.state} / ch is: {self.ch} / ix: {self.ix} / val: {cval}')
             if re.match('[a-z0-9\n]', self.ch, re.IGNORECASE):
@@ -153,7 +170,7 @@ class Parser:
         ##
         return cval
 
-    def dispatch(self, state_changed, ckey):
+    def _dispatch(self, state_changed, ckey):
         self.next_char()
         if self.ch == EOF:
             return SgfTree(properties=self.props, children=self.children) # what we have so far
@@ -221,19 +238,4 @@ class Parser:
 # --------------------------
 
 def parse(input_string):
-    if len(input_string) <= 0:
-        raise(ValueError("Empty string"))
-
-    # len(input) > 0
-    if len(input_string) == 1:
-        raise(ValueError("Invalid single character"))
-
-    # len(input) > 1
-    if len(input_string) == 2 and input_string == '()':
-        raise(ValueError("Empty Expression"))
-
-    if input_string[0] != '(' or input_string[-1] != ')':
-        raise(ValueError("Not a proper expression"))
-
-    parser = Parser(input_string)
-    return parser.parse()
+    return Parser.new(input_string)
