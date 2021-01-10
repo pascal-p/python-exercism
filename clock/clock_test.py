@@ -6,7 +6,7 @@ from clock import Clock
 
 
 class ClockTest(unittest.TestCase):
-    # Create A New Clock With An Initial Time
+    ## Create A New Clock With An Initial Time
     def test_on_the_hour(self):
         self.assertEqual(str(Clock(8, 0)), "08:00")
 
@@ -67,7 +67,36 @@ class ClockTest(unittest.TestCase):
     def test_negative_hour_and_minutes_both_roll_over_continuously(self):
         self.assertEqual(str(Clock(-121, -5810)), "22:10")
 
-    # Add Minutes
+    ## Create A New Clock With An Initial Time (with second precision)
+    def test_on_the_hour_min_sec_1(self):
+        self.assertEqual(str(Clock(10, 10, second=10,
+                                   precision='second')), "10:10:10")
+
+    def test_on_the_hour_min_sec_2(self):
+        self.assertEqual(str(Clock(10, 27, second=73,
+                                   precision='second')), "10:28:13")
+
+    def test_on_the_hour_min_sec_2(self):
+        self.assertEqual(str(Clock(10, 27, second=183,
+                                   precision='second')), "10:30:03")
+
+    def test_on_the_hour_min_sec_4(self):
+        self.assertEqual(str(Clock(10, 59, second=61,
+                                   precision='second')), "11:00:01")
+
+    def test_on_the_hour_min_sec_5(self):
+        self.assertEqual(str(Clock(0, 0, second=-60,
+                                   precision='second')), "23:59:00")
+
+    def test_on_the_hour_min_sec_6(self):
+        self.assertEqual(str(Clock(0, 0, -61,
+                                   precision='second')), "23:58:59")
+
+    def test_on_the_hour_min_sec_7(self):
+        self.assertEqual(str(Clock(0, 0, -181,
+                                   precision='second')), "23:56:59")
+
+    ## Add Minutes
     def test_add_minutes(self):
         self.assertEqual(str(Clock(10, 0) + 3), "10:03")
 
@@ -92,7 +121,35 @@ class ClockTest(unittest.TestCase):
     def test_add_more_than_two_days(self):
         self.assertEqual(str(Clock(1, 1) + 3500), "11:21")
 
-    # Subtract Minutes
+    ## Add Minutes and Seconds
+    def test_add_minutes_seconds_1(self):
+        self.assertEqual(str(Clock(10, 0, precision='second').add(3, 33)), "10:03:33")
+
+    def test_add_minutes_seconds_2(self):
+        self.assertEqual(str(Clock(10, 0, 10,
+                                   precision='second').add(3, 33)), "10:03:43")
+
+    def test_add_minutes_seconds_3(self):
+        self.assertEqual(str(Clock(10, 59, 59,
+                                   precision='second').add(0, 2)), "11:00:01")
+
+    def test_add_minutes_seconds_4(self):
+        self.assertEqual(str(Clock(11, 59, 59,
+                                   precision='second').add(0, 2)), "12:00:01")
+
+    def test_add_minutes_seconds_5(self):
+        self.assertEqual(str(Clock(23, 59, 59,
+                                   precision='second').add(0, 2)), "00:00:01")
+
+    def test_add_minutes_seconds_6(self):
+        self.assertEqual(str(Clock(23, 59, 59,
+                                   precision='second').add(1, 62)), "00:02:01")
+
+    def test_add_minutes_seconds_7(self):
+        self.assertEqual(str(Clock(23, 59, 59,
+                                   precision='second').add(0, 7200)), "01:59:59")
+
+    ## Subtract Minutes
     def test_subtract_minutes(self):
         self.assertEqual(str(Clock(10, 3) - 3), "10:00")
 
@@ -117,7 +174,28 @@ class ClockTest(unittest.TestCase):
     def test_subtract_more_than_two_days(self):
         self.assertEqual(str(Clock(2, 20) - 3000), "00:20")
 
-    # Compare Two Clocks For Equality
+    ## Subtract Minutes, Seconds
+    def test_subtract_minutes_seconds_1(self):
+        self.assertEqual(str(Clock(10, 3, 0,
+                                   precision='second').sub(3, 0)), "10:00:00")
+
+    def test_subtract_minutes_seconds_2(self):
+        self.assertEqual(str(Clock(10, 3, 0,
+                                   precision='second').sub(0, 180)), "10:00:00")
+
+    def test_subtract_minutes_seconds_3(self):
+        self.assertEqual(str(Clock(10, 3, 0,
+                                   precision='second').sub(1, 180)), "09:59:00")
+
+    def test_subtract_minutes_seconds_4(self):
+        self.assertEqual(str(Clock(2, 20, 0,
+                                   precision='second').sub(3000, 60)), "00:19:00")
+
+    def test_subtract_minutes_seconds_5(self):
+        self.assertEqual(str(Clock(2, 20, 0,
+                                   precision='second').sub(3000, 3600)), "23:20:00")
+
+    ## Compare Two Clocks For Equality
     def test_clocks_with_same_time(self):
         self.assertEqual(Clock(15, 37), Clock(15, 37))
 
@@ -166,6 +244,14 @@ class ClockTest(unittest.TestCase):
     def test_full_clock_and_zeroed_clock(self):
         self.assertEqual(Clock(24, 0), Clock(0, 0))
 
+    ## Compare Two Clocks For Equality / second precision
+    def test_clocks_with_negative_hours_and_minutes_seconds_that_wrap(self):
+        self.assertEqual(Clock(18, 7, 59, precision='second'),
+                         Clock(-54, -11513, 59, precision='second'))
+
+    def test_clocks_with_minutes_seconds_overflow_2(self):
+        self.assertEqual(Clock(0, 1, 59, precision='second'),
+                         Clock(0, 1440, 119, precision='second'))
 
 if __name__ == "__main__":
     unittest.main()
