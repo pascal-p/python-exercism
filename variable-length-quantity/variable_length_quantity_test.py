@@ -83,52 +83,57 @@ class VariableLengthQuantityTest(unittest.TestCase):
         )
 
 
-    # def test_one_byte(self):
-    #     self.assertEqual(decode([0x7F]), [0x7F])
+    def test_one_byte(self):
+        self.assertEqual(decode([0x7F]), [0x7F])
 
-    # def test_two_bytes(self):
-    #     self.assertEqual(decode([0xC0, 0x0]), [0x2000])
+    def test_two_bytes(self):
+        self.assertEqual(decode([0xC0, 0x0]), [0x2000])
 
-    # def test_three_bytes(self):
-    #     self.assertEqual(decode([0xFF, 0xFF, 0x7F]), [0x1FFFFF])
+    def test_three_bytes(self):
+        self.assertEqual(decode([0xFF, 0xFF, 0x7F]), [0x1FFFFF])
 
-    # def test_four_bytes(self):
-    #     self.assertEqual(decode([0x81, 0x80, 0x80, 0x0]), [0x2 00 000])
+    def test_four_bytes(self):
+        self.assertEqual(decode([0x81, 0x80, 0x80, 0x0]), [0x200000])
 
-    # def test_maximum_32_bit_integer(self):
-    #     self.assertEqual(decode([0x8F, 0xFF, 0xFF, 0xFF, 0x7F]), [0xFFFFFFFF])
+    def test_maximum_32_bit_integer(self):
+        self.assertEqual(decode([0x8F, 0xFF, 0xFF, 0xFF, 0x7F]), [0xFFFFFFFF])
 
-    # def test_incomplete_sequence_causes_error(self):
-    #     with self.assertRaisesWithMessage(ValueError):
-    #         decode([0xFF])
+    def test_incomplete_sequence_causes_error(self):
+        with self.assertRaisesWithMessage(ValueError):
+            decode([0xFF])
 
-    # def test_incomplete_sequence_causes_error_even_if_value_is_zero(self):
-    #     with self.assertRaisesWithMessage(ValueError):
-    #         decode([0x80])
+    def test_incomplete_sequence_causes_error_even_if_value_is_zero(self):
+        with self.assertRaisesWithMessage(ValueError):
+            decode([0x80])
 
-    # def test_multiple_values(self):
-    #     self.assertEqual(
-    #         decode(
-    #             [
-    #                 0xC0,
-    #                 0x0,
-    #                 0xC8,
-    #                 0xE8,
-    #                 0x56,
-    #                 0xFF,
-    #                 0xFF,
-    #                 0xFF,
-    #                 0x7F,
-    #                 0x0,
-    #                 0xFF,
-    #                 0x7F,
-    #                 0x81,
-    #                 0x80,
-    #                 0x0,
-    #             ]
-    #         ),
-    #         [0x2000, 0x123456, 0xFFFFFFF, 0x0, 0x3FFF, 0x4000],
-    #     )
+    def test_multiple_values(self):
+        self.assertEqual(
+            decode(
+                [
+                    0xC0,  # -- 0x2000
+                    0x0,
+
+                    0xC8,  # -- 0x123456
+                    0xE8,
+                    0x56,
+
+                    0xFF,  # -- 0xFFFFFFF
+                    0xFF,
+                    0xFF,
+                    0x7F,
+
+                    0x0,   # -- 0x0,
+
+                    0xFF,  # -- 0x3FFF
+                    0x7F,
+
+                    0x81,  # -- 0x4000
+                    0x80,
+                    0x0,
+                ]
+            ),
+            [0x2000, 0x123456, 0xFFFFFFF, 0x0, 0x3FFF, 0x4000],
+        )
 
     # Utility functions
     def assertRaisesWithMessage(self, exception):
