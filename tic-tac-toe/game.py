@@ -136,7 +136,7 @@ class Game():
         return False
 
 ## Client
-def play(game, x_player, o_player, disp_game=True):
+def play(game, x_player, o_player, disp_game=True, tsleep=0.1):
     if disp_game: game.display_board_num()
     symbol = 'X'
     while game.empty_cells():
@@ -156,7 +156,7 @@ def play(game, x_player, o_player, disp_game=True):
             # next turn
             symbol = 'O' if symbol == 'X' else 'X'
         #
-        if disp_game: time.sleep(0.6)
+        if disp_game: time.sleep(tsleep)
     #
     if disp_game: print('Tie!')
     return None
@@ -188,13 +188,108 @@ def interactive_play(n=Game.GAME_DEF_DIM):
     play(game, x_player, o_player)
 
 if __name__ == '__main__':
-    # interactive_play(3)   ## for n > 3 => slow search!
-    simulation(1000)
+    interactive_play(4)   ## for n > 3 => slow search!
+    # simulation(1000, n=4)
 
-#
+
+## 1000 simulation - n = 3
+
+# time python ./game.py     ## pure-minimax
 # o_wins: 808, x_wins: 0, n_ties: 192
-# 
+#
 # real    3m25.108s
 # user    3m25.098s
 # sys     0m0.009s
+
+# time python ./game.py     ## minimax α-β
+# o_wins: 776, x_wins: 0, n_ties: 224
 #
+# real    3m41.198s
+# user    3m41.192s
+# sys     0m0.004s
+
+# time python ./game.py  # minimax + α-β pruning
+# o_wins: 815, x_wins: 0, n_ties: 185
+#
+# real    0m16.348s
+# user    0m16.348s
+# sys     0m0.000s
+
+# time python ./game.py  # minimax + α-β pruning
+# o_wins: 788, x_wins: 0, n_ties: 212
+#
+# real    0m15.258s
+# user    0m15.258s
+# sys     0m0.000s
+
+
+## interactive - n = 4 / minimax + α-β pruning
+
+# O plays move to cell 15
+# |----|----|----|----|
+# | O  | O  | X  | O  |
+# |----|----|----|----|
+# | O  | X  | X  | O  |
+# |----|----|----|----|
+# | O  | X  | X  | X  |
+# |----|----|----|----|
+# | X  | X  | O  | O  |
+# |----|----|----|----|
+# Tie!
+# real    7m20.327s
+# user    7m18.697s
+# sys     0m0.028s
+
+# O plays move to cell 5
+# |----|----|----|----|
+# | O  | O  | X  | O  |
+# |----|----|----|----|
+# | O  | O  | O  | X  |
+# |----|----|----|----|
+# | X  | X  | O  | X  |
+# |----|----|----|----|
+# | X  | X  | X  | O  |
+# |----|----|----|----|
+# O wins!
+# real    6m49.782s
+# user    6m48.262s
+# sys     0m0.013s
+
+# O plays move to cell 13
+# |----|----|----|----|
+# | O  | O  | O  | X  |
+# |----|----|----|----|
+# | O  | X  | X  | X  |
+# |----|----|----|----|
+# | X  | X  | O  | O  |
+# |----|----|----|----|
+# | O  | O  | X  | X  |
+# |----|----|----|----|
+# Tie!
+# real    5m16.985s
+# user    5m14.982s
+# sys     0m0.381s
+
+
+## interactive - n = 4 / minimax - only  / gave up
+# ...
+# ...
+#
+# KeyboardInterrupt
+# real    246m53.312s
+# user    246m50.794s
+# sys     0m0.904s
+
+
+
+## 1000 simulation - n = 4
+#
+# time python ./game.py  # minimax + α-β pruning
+#
+# ...
+# ...
+#
+# KeyboardInterrupt
+# real    137m54.605s
+# user    137m51.959s
+# sys     0m0.592s
