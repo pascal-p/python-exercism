@@ -26,7 +26,7 @@ class Game():
 
     def winner(self, cell, symbol):
         """
-        any self.n aligned symbol, wether horizonatally, vertically or diagonally
+        any self.n aligned symbol, wether horizontally, vertically or diagonally
         """
         # 1 - check rows
         return self.win_row(cell, symbol) or self.win_col(cell, symbol) \
@@ -39,19 +39,20 @@ class Game():
         return self.board.count(__class__.EMPTY_SYMB)
 
     def available_moves(self):
-        return [ix for ix, c in enumerate(self.board) if c == __class__.EMPTY_SYMB]
+        return [ix for ix, c in enumerate(self.board) \
+                if c == __class__.EMPTY_SYMB]
 
     def display_board(self):
         n = self.n
-        n_dig = math.ceil(math.log(n) / math.log(10)) + 1
-        npre, npost = math.floor((n_dig + 1) / 2), math.ceil((n_dig + 1) / 2)
-        print(('|' + '-' * (n_dig + 2)) * n + '|')
+        n_digits = __class__.ndigits(n)
+        npre, npost = math.floor((n_digits + 1) / 2), math.ceil((n_digits + 1) / 2)
+        print(('|' + '-' * (n_digits + 2)) * n + '|')
         srow = ''
         for row in range(0, n):
             for c in range(row * n, (row + 1) * n):
                 srow += '|' + ' ' * npre + self.board[c] + ' ' * npost
             srow += '|\n'
-            srow += ('|' + '-' * (n_dig + 2)) * n + '|\n'
+            srow += ('|' + '-' * (n_digits + 2)) * n + '|\n'
         print(srow)
         print()
         return
@@ -82,24 +83,20 @@ class Game():
 
         """
         n = self.n
-        n_dig = math.ceil(math.log(n) / math.log(10)) + 1
-
-        # num_board = [
-        #    [str(ix) for ix in range(jx * n, (jx+1) * n)] for jx in range(n)
-        #]
+        n_digits = __class__.ndigits(n)
         num_board = []
         for jx in range(n):
             row = []
             for ix in range(jx * n, (jx+1) * n):
                 s = str(ix)
-                q, r = divmod(n_dig - len(s), 2)
+                q, r = divmod(n_digits - len(s), 2)
                 row.append(' ' * q + s + ' ' * r)
             num_board.append(row)
 
-        print(('|' + '-' * (n_dig + 2)) * n + '|')
+        print(('|' + '-' * (n_digits + 2)) * n + '|')
         for row in num_board:
             print('| ' + ' | '.join(row) + ' |')
-            print(('|' + '-' * (n_dig + 2)) * n + '|')
+            print(('|' + '-' * (n_digits + 2)) * n + '|')
         print()
         return
 
@@ -109,31 +106,27 @@ class Game():
         return [symb for _ in range(n * n)]
 
     def win_row(self, cell, symbol):
-        rn = cell // self.n   # math.floor(cell / self.n)
-        # for rn in range(0, self.n):
+        rn = cell // self.n
         r = self.board[rn * self.n:(rn + 1) * self.n]
-        if ''.join(r) == symbol * self.n:
-            return True
-        return False
+        return ''.join(r) == symbol * self.n
 
     def win_col(self, cell, symbol):
         cn = cell % self.n   # column number (index)
         ulim = self.n * self.n + cn
         sc = ''.join([self.board[c] for c in range(0 + cn, ulim, self.n)])
-        if sc == symbol * self.n:
-            return True
-        return False
+        return sc == symbol * self.n
 
     def win_diag(self, cell, symbol):
         # up
         upd = [d * (self.n - 1) for d in range(1, self.n + 1)]
-        if cell in upd and ''.join([self.board[x] for x in upd]) ==  symbol * self.n:
+        if cell in upd and ''.join([self.board[x] for x in upd]) == symbol * self.n:
             return True
         # down
         down = [d * (self.n + 1) for d in range(0, self.n)]
-        if cell in down and ''.join([self.board[x] for x in down]) ==  symbol * self.n:
-            return True
-        return False
+        return cell in down and ''.join([self.board[x] for x in down]) == symbol * self.n
+
+    def ndigits(n: int):
+        return math.ceil(math.log(n) / math.log(10)) + 1
 
 ## Client
 def play(game, x_player, o_player, disp_game=True, tsleep=0.1):
