@@ -58,12 +58,29 @@ class TwoBucketTest(unittest.TestCase):
         with self.assertRaisesWithMessage(ValueError):
             self.assertEqual(measure(6, 15, 4, "one"))
 
-    def test_measure_using_b1_of_size_6_and_b2_of_size_15_start_with_b1_1_2(
+    def test_measure_using_b1_of_size_6_and_b2_of_size_15_start_with_b1_1_2_9(
         self
     ):
         self.assertEqual(measure(6, 15, 9, "one"), (10, "two", 0))
         self.assertEqual(measure(6, 15, 9, "two"), (2, "two", 6))
 
+    def test_measure_using_b1_of_size_6_and_b2_of_size_15_start_with_b1_1_2_18(
+        self
+    ):
+        self.assertEqual(measure(6, 15, 18, "one"), (6, 'two', 3))
+        self.assertEqual(measure(6, 15, 18, "two"), (8, 'two', 6))
+
+    def test_measure_using_b1_of_size_2_and_b2_of_size_15_start_with_b1_1_2_1(
+        self
+    ):
+        self.assertEqual(measure(2, 15, 1, "one"), (16, 'one', 15))
+        self.assertEqual(measure(2, 15, 1, "two"), (14, 'two', 2))
+
+    def test_measure_using_b1_of_size_2_and_b2_of_size_15_start_with_b1_1_2_17(
+        self
+    ):
+        self.assertEqual(measure(2, 15, 17, "one"), (2, 'both', 17))
+        self.assertEqual(measure(2, 15, 17, "two"), (2, 'both', 17))
 
     # def test_measure_using_b1_of_size_2_and_b2_of_size_3_start_with_b1_and_end_with_b2(
     #    self

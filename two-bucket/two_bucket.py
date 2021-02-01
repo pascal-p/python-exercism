@@ -21,6 +21,9 @@ Valid moves:
    - emptying one bucket and doing nothing to the other  (emptying)
    - filling one bucket and doing nothing to the other   (filling)
 
+Ref.
+  How not to Die Hard with Math (https://www.youtube.com/watch?v=0Oef3MHYEC0) - May 29, 2015
+
 """
 
 class Bucket:
@@ -92,24 +95,27 @@ class Bucket:
   2 bucket B (big) S (Small)
   Starting with biggest bucket (B), transitions are:
 
-  FB Fill B
-  TB Transfer B -> S
-  ES Empty Small
+  Case 1. Starting from biggest bucket B
+  FB ≡ Fill B
+  TB ≡ Transfer B (-> S)
+  ES ≡ Empty Small
 
-  Transitions are typically (starting from biggest):
+  Transitions are typically:
    1     2         3            4
-  FB -> TB -> is S full? yes:  ES  -> back to 2
-              is S full? no: back to 1
+  FB -> TB -> is S full? yes:  ES -> back to 2
+              is S full?  no:     -> back to 1
 
+  Case 2. Starting from smallest bucket S
+  FS ≡ Fill $
+  TS ≡ Transfer S (-> B)
+  EB ≡ Empty Big
 
-  FS Fill $
-  TS Transfer S -> B
-  EB Empty Big
-
-  Transitions are typically (starting from smallest):
+  Transitions are typically:
    1     2         3           4
   FS -> TS -> is B full? yes: EB -> back to 2
-              is B full? no: back to 1
+              is B full?  no:    -> back to 1
+
+  Therefore same transition in both cases
 
   is the problem possible?
   - 1 <= goal < b1.cap + b2.cap
@@ -138,13 +144,13 @@ class Problem:
             return (1, self.start, 0)
 
         elif self.goal == self.b1.cap + self.b2.cap:
-            return (2, self.start, self.b2.content + self.b1.contant)
+            return (2, 'both', self.goal)
 
         if self.start == "one":
-            return self.b2_strategy()
+            return self.strategy(self.b2)
         else:
             # self.start == "two"
-            return self.b1_strategy()
+            return self.strategy(self.b1)
 
     def filling(self, b: Bucket):
         b.filling()
@@ -158,26 +164,29 @@ class Problem:
         return self.b1.content == self.goal or self.b2.content == self.goal or \
             self.b1.content + self.b2.content == self.goal
 
-    def b1_strategy(self):
+    def strategy(self, b):
         """
-        FS -> TS -> is N full? yes:  EB  -> back to 2
-                    is B full? no: back to 1
+         1     2                            3
+        Fb -> Tb(o_b) -> is o_b full? yes: E(o_b) -> back to 2
+                                      no: -> back to 1
         """
+        o_b = self.b2 if self.b1 == b else self.b1
+
         nextop = "filling"
         while not self.goal_reached():
             if nextop == "filling":
-                self.filling(self.b2)
+                self.filling(o_b)
                 self.move += 1
                 nextop = "transfer"
 
             if nextop == "transfer":
                 self.move += 1
-                self.b2.transfer(self.b1)
+                o_b.transfer(b)
 
             if self.goal_reached(): break
 
-            if self.b1.is_full():
-                self.b1.emptying()
+            if b.is_full():
+                b.emptying()
                 self.move += 1
                 next_op = "transfer"
             else:
@@ -186,34 +195,7 @@ class Problem:
         # print(f"\n\tFINAL STATE: <{self.b1} / {self.b2}> - start was: {self.start}")
         return self.solution()
 
-    def b2_strategy(self):
-        """
-        FB -> TB -> is S full? yes:  ES  -> back to 2
-                    is S full? no: back to 1
-        """
-        nextop = "filling"
-        while not self.goal_reached():
-            if nextop == "filling":
-                self.filling(self.b1)
-                self.move += 1
-                nextop = "transfer"
-
-            if nextop == "transfer":
-                self.move += 1
-                self.b1.transfer(self.b2)
-
-            if self.goal_reached(): break
-
-            if self.b2.is_full():
-                self.b2.emptying()
-                self.move += 1
-                next_op = "transfer"
-            else:
-                nextop = "filling"
-        #
-        # print(f"\n\tFINAL STATE: <{self.b1} / {self.b2}> - start was: {self.start}")
-        return self.solution()
-
+#
 def gcd(x: int, y: int) -> int:
     """
     assume x > 0 and y > 0
