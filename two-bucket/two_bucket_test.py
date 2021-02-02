@@ -51,7 +51,6 @@ class TwoBucketTest(unittest.TestCase):
     ):
         self.assertEqual(measure(1, 3, 3, "two"), (1, "two", 0))
 
-
     def test_measure_using_b1_of_size_6_and_b2_of_size_15_start_with_b1_4_impossible(
         self
     ):

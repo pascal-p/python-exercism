@@ -1,5 +1,3 @@
-from copy import copy
-
 """
 Since this mathematical problem is fairly subject to interpretation / individual approach, the tests have been written specifically to expect one overarching solution.
 
@@ -14,7 +12,7 @@ Your program will take as input:
 More assumptions
    - assume we start with both buckets empty
    - assume size of bucket is an integer
-   - assume the desired number of liter is an integer
+   - assume the desired number of litre is an integer
 
 Valid moves:
    - pouring from one bucket to another                  (transfer)
@@ -84,9 +82,6 @@ class Bucket:
             return self.content == self.cap
         return d_bucket.content == d_bucket.cap
 
-    def goal_reached(self, goal: int):
-        return self.content == goal
-
     def __str__(self):
         return f"c: {self.content}, cap: {self.cap}"
 
@@ -119,14 +114,14 @@ class Bucket:
 
   is the problem possible?
   - 1 <= goal < b1.cap + b2.cap
-  - pgcd(B, C) != 1 only multiples of PGCD reachable
+  - gcd(B, S) != 1 only multiples of GCD reachable
 
 """
 class Problem:
     def __init__(self, b1: Bucket, b2: Bucket, goal: int, start: str):
         assert start == "one" or start == "two", "start must be 'one' or 'two'"
         self.b1, self.b2 = b1, b2
-        assert 1 <=  goal <=  b1.cap + b2.cap, f"goal should satisfy: 0 <= {goal} <= {b1.cap + b2.cap}"
+        assert 1 <=  goal <=  b1.cap + b2.cap, f"goal should satisfy: 1 <= {goal} <= {b1.cap + b2.cap}"
         self.goal, self.start = goal, start
         self.move = 0
 
@@ -212,6 +207,7 @@ def gcd(x: int, y: int) -> int:
 #
 def measure(bucket_one: int, bucket_two: int, goal: int, start_bucket: str):
     assert start_bucket == "one" or start_bucket == "two", "start_bucket must be 'one' or 'two'"
+    assert bucket_one > 0 and bucket_two > 0 and bucket_one != bucket_two
 
     b1 = Bucket(bucket_one)
     b2 = Bucket(bucket_two)
