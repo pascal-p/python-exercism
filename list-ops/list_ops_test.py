@@ -9,6 +9,8 @@ from list_ops import (
     reverse,
     filter as list_ops_filter,
     map as list_ops_map,
+    any as list_ops_any,
+    all as list_ops_all
 )
 
 # Tests adapted from `problem-specifications//canonical-data.json`
@@ -96,6 +98,31 @@ class ListOpsTest(unittest.TestCase):
 
     def test_reverse_reverse_mixed_types(self):
         self.assertEqual(reverse(["xyz", 4.0, "cat", 1]), [1, "cat", 4.0, "xyz"])
+
+    def test_any_ret_false1(self):
+        self.assertFalse(
+            list_ops_any(lambda x: x % 2 == 0, [9, 3, 7, 5])
+        )
+
+    def test_any_ret_true1(self):
+        self.assertTrue(
+            list_ops_any(lambda x: x % 2 == 0, [1, 9, 4, 3, 8, 7, 5])
+        )
+
+    def test_all_ret_true1(self):
+        self.assertTrue(
+            list_ops_all(lambda x: x % 2 == 1, [9, 3, 7, 5])
+        )
+
+    def test_all_ret_false1(self):
+        self.assertFalse(
+            list_ops_all(lambda x: x % 2 == 0, [9, 3, 7, 5])
+        )
+
+    def test_all_ret_true2(self):
+        self.assertTrue(
+            list_ops_all(lambda x: x % 2 == 1, [])
+        )
 
 
 if __name__ == "__main__":

@@ -13,6 +13,7 @@ def append(list1: List[Any], list2: List[Any]) -> List[Any]:
     # return [*list1, *list2] # using splat operator
     return list1 + list2
 
+
 def concat(lists: List[List[Any]]) -> List[Any]:
     if length(lists) <= 1:
         return lists
@@ -24,7 +25,11 @@ def concat(lists: List[List[Any]]) -> List[Any]:
 
     return nl
 
+
 def filter(function, list: List[Any]) -> List[Any]:
+    """
+    return elements of list that satisfy (predicate) function
+    """
     if length(list) == 0: return list
 
     return [x for x in list if function(x)]
@@ -34,6 +39,7 @@ def length(list: List[Any]) -> int:
     n = 0
     for _x in list: n += 1
     return n
+
 
 def map(function, list: List[Any]) -> List[Any]:
     if length(list) == 0: return list
@@ -70,3 +76,19 @@ def reverse(list: List[Any]) -> List[Any]:
         nl = [x] + nl
 
     return nl
+
+
+def any(function, list: List[Any]) -> bool:
+    if length(list) == 0: return True
+
+    for x in list:
+        if function(x): return True
+    return False
+
+
+def all(function, list: List[Any]) -> bool:
+    if length(list) == 0: return True
+
+    for x in list:
+        if not function(x): return False
+    return True
