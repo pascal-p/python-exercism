@@ -5,9 +5,9 @@ from nth_prime import prime
 # Tests adapted from `problem-specifications//canonical-data.json`
 
 
-def prime_range(n):
+def prime_range(n, lim=10_000):
     """Returns a list of the first n primes"""
-    return [prime(i) for i in range(1, n + 1)]
+    return [prime(i, lim) for i in range(1, n + 1)]
 
 
 class NthPrimeTest(unittest.TestCase):
@@ -27,7 +27,7 @@ class NthPrimeTest(unittest.TestCase):
         self.assertEqual(prime(1049), 8377)
 
     def test_big_prime(self):
-        self.assertEqual(prime(10001), 104743)
+        self.assertEqual(prime(10001, lim=1_000_000), 104743)
 
     def test_bigger_prime(self):
         self.assertEqual(prime(100_001, lim=10_000_000), 1299721)
@@ -41,32 +41,14 @@ class NthPrimeTest(unittest.TestCase):
         self.assertEqual(
             prime_range(20),
             [
-                2,
-                3,
-                5,
-                7,
-                11,
-                13,
-                17,
-                19,
-                23,
-                29,
-                31,
-                37,
-                41,
-                43,
-                47,
-                53,
-                59,
-                61,
-                67,
-                71,
+                2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
+                31, 37, 41, 43, 47, 53, 59, 61, 67, 71,
             ],
         )
 
     def test_first_hundred_primes(self):
         self.assertEqual(
-            prime_range(100),
+            prime_range(100, lim=1_000_000),
             [
                 2, 3, 5, 7, 11, 13, 17, 19, 23, 29,
                 31, 37, 41, 43, 47, 53, 59, 61, 67, 71,

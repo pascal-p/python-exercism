@@ -3,14 +3,14 @@ from typing import List# , Tuple
 L_Int = List[int]
 L_Bool = List[bool]
 
-MAX_PRIME_LIM = 1_000_000
+MAX_PRIME_LIM = 10_000
 
 # not satisfactory => not efficient!
 
 def prime(num: int, lim=MAX_PRIME_LIM) -> int:
     if not 0 < num < lim:
         raise ValueError("Not in acceptable interval")
-
+    #
     _primes = gen_primes_lt(lim)
     # alt:  _primes = list(gen_primes(MAX_PRIME_LIM))
     return _primes[num - 1]
@@ -18,16 +18,15 @@ def prime(num: int, lim=MAX_PRIME_LIM) -> int:
 
 def gen_primes_lt(n: int) -> L_Int:
     prime_ind = [True] + [
-        True for _ in range(3, n - 1, 2)
+        True for _ in range(1, (n - 4) // 2 + 1) # range(3, n - 1, 2)
     ]                                        # gen. list of candidate prime [3, 5, 7, ...]...
     #                                        # ... a priori primes (set to True)
-
     ix, m = 0, len(prime_ind)
     while ix < m:
         cp = 2 * ix + 3                      # candidate prime cp from 3, 5, 7, 11...
         for jx in range(ix + cp, m, cp):     # mark multiples of cp as non prime (sieve method)
             prime_ind[jx] = False
-
+        #
         ix += 1                              # set ix to next (candidate) prime
         while ix < m and not prime_ind[ix]:
             ix += 1
