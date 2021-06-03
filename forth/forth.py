@@ -55,21 +55,15 @@ def evaluate(input_data:List[str]):
                 state = 'ASSIGN_VAL'
 
             elif state == 'ASSIGN_VAL':
-                if token == ';':
-                    uenv[key] = val                 ## overwrite if key already present
-                    state = 'STD'
-                else:
-                    if is_word(token) and token in uenv:
-                        val.append(uenv[token][0])  ## replace token by its value!
-                    else:
-                        val.append(token)
+                state = assign_val(token, uenv, key, val, state)
 
             elif state == 'STD':
                 if is_num(token):
                     stack.push(token)
 
-                elif is_cust_op(token, uenv):  ## Need to be defined before is_stack_op(token) and is_arithmetic_op(token)...
-                    #                          ## ... because custom action can overide (predefined) stack/arithmetic action(s)
+                elif is_cust_op(token, uenv):
+                    ## Need to be defined before is_stack_op(token) and is_arithmetic_op(token)...
+                    ## ... because custom action can overide (predefined) stack/arithmetic action(s)
                     cust_action_fn(token, uenv, stack)
 
                 elif is_arithmetic_op(token):
@@ -93,58 +87,42 @@ def evaluate(input_data:List[str]):
         assert len(stack) == 1
     return stack.buf
 
+def assign_val(token, uenv, key, val, state):
+    if token == ';':
+        uenv[key] = val             ## overwrite if key already present
+        state = 'STD'
+    elif is_word(token) and token in uenv:
+        val.append(uenv[token][0])  ## replace token by its value!
+    else:
+        val.append(token)
+    return state
 
 def tokenize(input_data:List[str]):
     jx = 0
     tokens = [[] for _ in range(len(input_data))]
     for inp in input_data:
         state, ctoken  = 'init', ''
-
         ix = 0
         while ix < len(inp):
             ch = inp[ix]
             ix += 1
-            # print(f">> state: {state} / ch: [{ch}] / inp: {inp}")
             if re.match('\s', ch, re.IGNORECASE):
                 add_token(state, ctoken, tokens, jx)
                 state, ctoken = 'init', ''
                 # continue
 
             elif state == 'init':
-                if '0' <= ch <= '9':
-                    state = 'number'
-                    ctoken = ch
-
-                elif re.match('[a-z]', ch, re.IGNORECASE):
-                    state = 'word'
-                    ctoken = ch.upper()
-
-                elif ch in Forth.ARITHMETIC_OPS:
-                    state = 'op'
-                    ctoken = ch
-
-                elif ch in Forth.SYMB:
-                    state = 'symbol'
-                    ctoken = ch
-
-                else:
-                    raise(ValueError("Unexpected token"))
+                (state, ctoken) = init_state(ch)
 
             elif state == 'number':
-                if '0' <= ch <= '9':
-                    ctoken += ch
-                else:
-                    raise(ValueError("Not a number"))
+                ctoken = number_state(ch, ctoken)
 
             elif state == 'op':
                 ## Not expecting to read any more char for this token
                 raise(ValueError("Not a supported operator"))
 
             elif state == 'word':
-                if re.match('[a-z0-9:;\-]', ch, re.IGNORECASE):
-                    ctoken += ch.upper()
-                else:
-                    raise(ValueError("Not a valid word"))
+                ctoken = word_state(ch, ctoken)
 
             elif state == 'symbol':
                 ## Not expecting to read any more char for this token
@@ -157,6 +135,36 @@ def tokenize(input_data:List[str]):
         jx +=1
     #
     return tokens
+
+
+def init_state(ch):
+    if '0' <= ch <= '9':
+        state = 'number'
+        ctoken = ch
+    elif re.match('[a-z]', ch, re.IGNORECASE):
+        state = 'word'
+        ctoken = ch.upper()
+    elif ch in Forth.ARITHMETIC_OPS:
+        state = 'op'
+        ctoken = ch
+    elif ch in Forth.SYMB:
+        state = 'symbol'
+        ctoken = ch
+    else:
+        raise(ValueError("Unexpected token"))
+    return (state, ctoken)
+
+def number_state(ch, ctoken):
+    if '0' <= ch <= '9':
+        ctoken += ch
+        return ctoken
+    raise(ValueError("Not a number"))
+
+def word_state(ch, ctoken):
+    if re.match('[a-z0-9:;\-]', ch, re.IGNORECASE):
+        ctoken += ch.upper()
+        return ctoken
+    raise(ValueError("Not a valid word"))
 
 def add_token(state, ctoken, tokens, jx):
     if state == 'word':
