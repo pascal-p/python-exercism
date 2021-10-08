@@ -1,3 +1,5 @@
+import types
+
 class Node:
     def __init__(self, value, succeeding=None, previous=None):
         self._value = value
@@ -15,6 +17,12 @@ class Node:
 
     def __str__(self):
          return f"{self._value}"
+
+    def __copy__(self):
+        cls = self.__class__
+        copy = cls.__new__(cls)
+        copy.__dict__.update(self.__dict__)
+        return copy
 
 
 class EmptyListException(Exception):
@@ -107,7 +115,7 @@ class LinkedList:
     # iterator
     #
     def __iter__(self):
-        return self
+        return self.__copy__()
 
     def __next__(self):
         """
@@ -123,6 +131,12 @@ class LinkedList:
 
     def next(self):
         return self.__next__()
+
+    def __copy__(self):
+        cls = self.__class__
+        copy = cls.__new__(cls)
+        copy.__dict__.update(self.__dict__)
+        return copy
 
     def __reversed__(self):
         """

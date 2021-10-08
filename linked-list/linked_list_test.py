@@ -1,6 +1,6 @@
 import unittest
 
-from linked_list import LinkedList, EmptyListException
+from linked_list import LinkedList
 
 
 class LinkedListTest(unittest.TestCase):
@@ -65,25 +65,18 @@ class LinkedListTest(unittest.TestCase):
         self.assertEqual(next(iterator), 10)
         self.assertEqual(next(iterator), 20)
 
-    def test_rev_iterator(self):
+    # @unittest.skip("extra-credit")
+    def test_iterator_independence(self):
         lst = LinkedList()
-        lst.push(10).push(20).push(30)
-        reviter = iter(lst)
-        self.assertEqual(reversed(reviter), 30)
-        self.assertEqual(reversed(reviter), 20)
-        self.assertEqual(reversed(reviter), 10)
+        lst.push(10)
+        lst.push(20)
+        iterator_a = iter(lst)
+        iterator_b = iter(lst)
+        self.assertEqual(next(iterator_a), 10)
+        self.assertEqual(next(iterator_a), 20)
+        self.assertEqual(next(iterator_b), 10)
+        self.assertEqual(next(iterator_b), 20)
 
-    def test_exception_pop_empty_list(self):
-        lst = LinkedList()
-        self.assertTrue(lst.is_empty)
-        with self.assertRaises(EmptyListException):
-            lst.pop()
-
-    def test_exception_shift_empty_list(self):
-        lst = LinkedList()
-        self.assertTrue(lst.is_empty)
-        with self.assertRaises(EmptyListException):
-            lst.shift()
 
 if __name__ == '__main__':
     unittest.main()
