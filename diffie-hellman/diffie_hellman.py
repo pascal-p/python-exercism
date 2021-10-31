@@ -43,12 +43,15 @@ def check_key(pkey, p, tag='priv'):
         raise ValueError("not a valid key")
 
 
-def is_prime(p: int) -> bool:
-    if p % 2 == 0 and p > 2:
+def is_prime(p: int) -> bool:    
+    if p <= 1 or (p > 2 and p % 2 == 0):
         return False # raise ArgumentError("not a prime number")
 
+    if p <= 3: return True
+    if p % 23 == 0: return False
+    
     sp = math.floor(math.sqrt(p))
-    for d in range(3, sp, 2):
-        if p % d == 0:
+    for d in range(5, sp, 6):
+        if p % d == 0 or p % (d + 2) == 0:
             return False
     return True

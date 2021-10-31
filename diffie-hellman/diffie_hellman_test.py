@@ -5,7 +5,6 @@ from diffie_hellman import private_key, public_key, secret, \
 
 # Tests adapted from `problem-specifications//canonical-data.json` @ v1.0.0
 
-
 class DiffieHellmanTest(unittest.TestCase):
     def test_private_key_is_in_range_1_p(self):
         primes = [5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47]
@@ -58,8 +57,8 @@ class DiffieHellmanTest(unittest.TestCase):
 
     #
     def test_private_key_is_in_range_1_p(self):
-        primes = [100000937, 100000939,100000963,100000969,100001029,100001053,100001059,100001081,100001087,100001107,
-                  100001119,100001131,100001147,100001159,100001177,100001183,100001203,100001207,100001219,100001227]
+        primes = [100000937, 100000939,100000963, 100000969, 100001029, 100001053, 100001059, 100001081, 100001087, 100001107,
+                  100001119, 100001131, 100001147, 100001159, 100001177, 100001183, 100001203, 100001207, 100001219, 100001227 ]
         for p in primes:
             self.assertTrue(1 < s_private_key(p) < p)
 
@@ -94,8 +93,6 @@ class DiffieHellmanTest(unittest.TestCase):
         secret_a = s_secret(p, bob_public_key, alice_private_key)
         secret_b = s_secret(p, alice_public_key, bob_private_key)
         self.assertTrue(secret_a == secret_b)
-
-
 
 if __name__ == "__main__":
     unittest.main()
