@@ -26,7 +26,7 @@ class BowlingGame:
             if len(self.pair) == 1:
                 if self.is_spare(*self.pins[-1]):
                     raise ValueError("cannot roll more")
-                if self.pair[0] < self.__class__.NUM_FRAMES and pins == self.__class__.MAX_PINS_VALUE:
+                if pins == self.__class__.MAX_PINS_VALUE:
                     raise ValueError("current pins cannot be a strike")
             else:
                 # pair is empty, last frame is not a strike nor a spare
@@ -34,12 +34,13 @@ class BowlingGame:
                 if sum(self.pins[-1]) == 0:
                     raise ValueError("cannot roll more")
 
-        if len(self.pins) == 11 and sum(self.pins[-1]) < self.__class__.MAX_PINS_VALUE:
+        if len(self.pins) == self.__class__.NUM_FRAMES + 1 and \
+           sum(self.pins[-1]) < self.__class__.MAX_PINS_VALUE:
             raise ValueError("cannot roll more")
 
-        if pins == self.__class__.MAX_PINS_VALUE:
+        if pins == self.__class__.MAX_PINS_VALUE and len(self.pair) == 0:
             self.pins.append((pins, 0))
-            self.pair = []
+            # self.pair = []
         else:
             if len(self.pair) == 1:
                 if self.pair[0] + pins > self.__class__.MAX_PINS_VALUE:
@@ -50,6 +51,9 @@ class BowlingGame:
                 self.pair = []
             elif len(self.pair) == 0:
                 self.pair.append(pins)
+            else:
+                # can only be of length % 2
+                raise ValueError("Inconsistency with the current pair")
 
     def score(self) -> int:
         if len(self.pair) == 1:
