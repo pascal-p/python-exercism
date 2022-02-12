@@ -24,6 +24,7 @@ class BowlingGame:
 
         if len(self.pins) == self.__class__.NUM_FRAMES:
             if len(self.pair) == 1:
+                # because now we have a full pair which means 2 rolls
                 if self.is_spare(*self.pins[-1]):
                     raise ValueError("cannot roll more")
                 if pins == self.__class__.MAX_PINS_VALUE:
@@ -95,18 +96,17 @@ class BowlingGame:
         """
         score, curr = [], 0
         stack = ['foo']  # sentinelle
-        for ix, (x, y) in enumerate(pins):
+        for (x, y) in pins:
             if x == 0 and y == 0:
                 score.append(0)
                 continue
+            #
             curr = x + y
-            if x + y < self.__class__.MAX_PINS_VALUE:
+            if curr < self.__class__.MAX_PINS_VALUE:
                 stack.append('open')
             elif self.is_strike(x, y):
-                curr = self.__class__.MAX_PINS_VALUE
                 stack.append('strike')
             else:
-                curr = self.__class__.MAX_PINS_VALUE
                 stack.append('spare')
             #
             if stack[-2] == 'open':
