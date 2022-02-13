@@ -1,77 +1,81 @@
+"""
+   Markdown exercice
+"""
+
 import re
 
 
-def parse(markdown):
+def parse(markdown: str) -> str:
+    """
+       parse a markdwon input -> htl
+    """
     lines = markdown.split('\n')
     res = ''
-    in_list = False
-    in_list_append = False
-    for i in lines:
-        if re.match('###### (.*)', i) is not None:
-            i = '<h6>' + i[7:] + '</h6>'
-        elif re.match('##### (.*)', i) is not None:
-            i = '<h5>' + i[6:] + '</h5>'
-        elif re.match('#### (.*)', i) is not None:
-            i = '<h4>' + i[5:] + '</h4>'
-        elif re.match('### (.*)', i) is not None:
-            i = '<h3>' + i[4:] + '</h3>'
-        elif re.match('## (.*)', i) is not None:
-            i = '<h2>' + i[3:] + '</h2>'
-        elif re.match('# (.*)', i) is not None:
-            i = '<h1>' + i[2:] + '</h1>'
-        m = re.match(r'\* (.*)', i)
+    in_list, in_list_append = False, False
+    for line in lines:
+        line = transform_headers(line)  # deal with headers
+        m = re.match(r'\* (.*)', line)  # itemize with *
         if m:
-            if not in_list:
+            curr = m.group(1)
+            curr = transform_bold(curr)
+            curr = transform_italic(curr)
+            if not in_list:  # => start a list with ul
                 in_list = True
-                is_bold = False
-                is_italic = False
-                curr = m.group(1)
-                m1 = re.match('(.*)__(.*)__(.*)', curr)
-                if m1:
-                    curr = m1.group(1) + '<strong>' + \
-                        m1.group(2) + '</strong>' + m1.group(3)
-                    is_bold = True
-                m1 = re.match('(.*)_(.*)_(.*)', curr)
-                if m1:
-                    curr = m1.group(1) + '<em>' + m1.group(2) + \
-                        '</em>' + m1.group(3)
-                    is_italic = True
-                i = '<ul><li>' + curr + '</li>'
+                line = '<ul><li>' + curr + '</li>'
             else:
-                is_bold = False
-                is_italic = False
-                curr = m.group(1)
-                m1 = re.match('(.*)__(.*)__(.*)', curr)
-                if m1:
-                    is_bold = True
-                m1 = re.match('(.*)_(.*)_(.*)', curr)
-                if m1:
-                    is_italic = True
-                if is_bold:
-                    curr = m1.group(1) + '<strong>' + \
-                        m1.group(2) + '</strong>' + m1.group(3)
-                if is_italic:
-                    curr = m1.group(1) + '<em>' + m1.group(2) + \
-                        '</em>' + m1.group(3)
-                i = '<li>' + curr + '</li>'
-        else:
-            if in_list:
-                in_list_append = True
-                in_list = False
-
-        m = re.match('<h|<ul|<p|<li', i)
-        if not m:
-            i = '<p>' + i + '</p>'
-        m = re.match('(.*)__(.*)__(.*)', i)
-        if m:
-            i = m.group(1) + '<strong>' + m.group(2) + '</strong>' + m.group(3)
-        m = re.match('(.*)_(.*)_(.*)', i)
-        if m:
-            i = m.group(1) + '<em>' + m.group(2) + '</em>' + m.group(3)
+                line = '<li>' + curr + '</li>'  # in_list => add item with li
+        elif in_list:
+            in_list_append, in_list = True, False
+        #
+        if not re.match('<h|<ul|<p|<li', line):
+            line = '<p>' + line + '</p>'
+        line = transform_bold(line)
+        line = transform_italic(line)
+        #
         if in_list_append:
-            i = '</ul>' + i
+            line = '</ul>' + line  # close current list
             in_list_append = False
-        res += i
-    if in_list:
-        res += '</ul>'
+        res += line
+    if in_list:         # no more lines and we were in a state list =>
+        res += '</ul>'  # close the current list
     return res
+
+
+def transform_bold(line: str) -> str:
+    """
+       bold emphasis
+    """
+
+    m = re.match('(.*)__(.*)__(.*)', line)
+    if m:
+        line = m.group(1) + '<strong>' + m.group(2) + '</strong>' + m.group(3)
+    return line
+
+
+def transform_italic(line: str) -> str:
+    """
+       italic emphasis
+    """
+    m = re.match('(.*)_(.*)_(.*)', line)
+    if m:
+        line = m.group(1) + '<em>' + m.group(2) + '</em>' + m.group(3)
+    return line
+
+
+def transform_headers(line: str) -> str:
+    """
+       deal with headers
+    """
+    if re.match(r'######\s+', line) is not None:
+        line = re.sub(r"######\s+(.*)", r"<h6>\1</h6>", line)
+    elif re.match(r'#####\s+', line) is not None:
+        line = re.sub(r"#####\s+(.*)", r"<h5>\1</h5>", line)
+    elif re.match(r'####\s+', line) is not None:
+        line = re.sub(r"####\s+(.*)", r"<h4>\1</h4>", line)
+    elif re.match(r'###\s+', line) is not None:
+        line = re.sub(r"###\s+(.*)", r"<h3>\1</h3>", line)
+    elif re.match(r'##\s+', line) is not None:
+        line = re.sub(r"##\s+(.*)", r"<h2>\1</h2>", line)
+    elif re.match(r'#\s+', line) is not None:
+        line = re.sub(r"#\s+(.*)", r"<h1>\1</h1>", line)
+    return line
