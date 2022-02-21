@@ -48,11 +48,11 @@ class Board:
             return (NONE, set())
         neighbors = self.get_neighbors(x, y)
         if len(neighbors) == 0:
-            return (NONE, set(((0, 0), )))
+            return (NONE, set(((x, y), )))
         count = self.get_color_partition(neighbors)
-        if count[WHITE] == 0 and count[NONE] == 0:  # all black
+        if count[BLACK] > 0 and count[WHITE] == 0 and count[NONE] == 0:
             return (BLACK, set(((x, y), )))
-        elif count[BLACK] == 0 and count[NONE] == 0:  # all white
+        elif count[BLACK] == 0 and count[WHITE] > 0 and count[NONE] == 0:
             return (WHITE, set(((x, y), )))
         #
         return self.get_territory(neighbors)

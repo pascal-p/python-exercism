@@ -17,6 +17,12 @@ class GoCountingTest(unittest.TestCase):
         self.assertEqual(stone, BLACK)
         self.assertSetEqual(territory, {(0, 0), (0, 1), (1, 0)})
 
+    def test_black_other_corner_territory_on_5x5_board(self):
+        board = Board(["  B  ", " B B ", "B W B", " W W ", "  W  "])
+        stone, territory = board.territory(x=4, y=0)
+        self.assertEqual(stone, BLACK)
+        self.assertSetEqual(territory, {(4, 0), (3, 0), (4, 1)})
+
     def test_white_center_territory_on_5x5_board(self):
         board = Board(["  B  ", " B B ", "B W B", " W W ", "  W  "])
         stone, territory = board.territory(x=2, y=3)
@@ -28,6 +34,12 @@ class GoCountingTest(unittest.TestCase):
         stone, territory = board.territory(x=1, y=4)
         self.assertEqual(stone, NONE)
         self.assertSetEqual(territory, {(0, 3), (0, 4), (1, 4)})
+
+    def test_open_other_corner_territory_on_5x5_board(self):
+        board = Board(["  B  ", " B B ", "B W B", " W W ", "  W  "])
+        stone, territory = board.territory(x=4, y=4)
+        self.assertEqual(stone, NONE)
+        self.assertSetEqual(territory, {(4, 3), (3, 4), (4, 4)})
 
     def test_a_stone_and_not_a_territory_on_5x5_board(self):
         board = Board(["  B  ", " B B ", "B W B", " W W ", "  W  "])
@@ -92,8 +104,6 @@ class GoCountingTest(unittest.TestCase):
         self.assertSetEqual(territories[WHITE], {(2, 3)})
         self.assertSetEqual(territories[NONE], {
             (0, 3), (0, 4), (1, 4), (3, 4), (4, 3), (4, 4),
-            # (2, 0), (1, 1), (3, 1), (0, 2), (4, 2), (2, 2),
-            # (1, 3), (3, 3), (2, 4)
         })
 
     # Utility functions
