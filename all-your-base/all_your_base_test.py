@@ -1,8 +1,11 @@
 import unittest
 
-from all_your_base import rebase
+from all_your_base import (
+    rebase,
+)
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v2.3.0
+# Tests adapted from `problem-specifications//canonical-data.json`
+
 
 class AllYourBaseTest(unittest.TestCase):
     def test_single_bit_one_to_decimal(self):
@@ -16,15 +19,6 @@ class AllYourBaseTest(unittest.TestCase):
 
     def test_binary_to_multiple_decimal(self):
         self.assertEqual(rebase(2, [1, 0, 1, 0, 1, 0], 10), [4, 2])
-
-    def test_decimal_to_decimal(self):
-        self.assertEqual(rebase(10, [1, 9, 4, 2], 10), [1, 9, 4, 2])
-
-    def test_decimal_to_hexadecimal_1(self):
-        self.assertEqual(rebase(10, [6, 5, 5, 3, 5], 16), [15, 15, 15, 15])
-
-    def test_decimal_to_hexadecimal_2(self):
-        self.assertEqual(rebase(10, [6, 5, 5, 3, 6], 16), [1, 0, 0, 0, 0])
 
     def test_decimal_to_binary(self):
         self.assertEqual(rebase(10, [4, 2], 2), [1, 0, 1, 0, 1, 0])
@@ -51,44 +45,62 @@ class AllYourBaseTest(unittest.TestCase):
         self.assertEqual(rebase(7, [0, 6, 0], 10), [4, 2])
 
     def test_input_base_is_one(self):
-        with self.assertRaisesWithMessage(ValueError):
+        with self.assertRaises(ValueError) as err:
             rebase(1, [0], 10)
+        self.assertEqual(type(err.exception), ValueError)
+        self.assertEqual(err.exception.args[0], "input base must be >= 2")
 
     def test_input_base_is_zero(self):
-        with self.assertRaisesWithMessage(ValueError):
+        with self.assertRaises(ValueError) as err:
             rebase(0, [], 10)
-
-    # def test_no_digits(self):
-    #     with self.assertRaisesWithMessage(ValueError):
-    #         rebase(2, [], 10)
+        self.assertEqual(type(err.exception), ValueError)
+        self.assertEqual(err.exception.args[0], "input base must be >= 2")
 
     def test_input_base_is_negative(self):
-        with self.assertRaisesWithMessage(ValueError):
+        with self.assertRaises(ValueError) as err:
             rebase(-2, [1], 10)
+        self.assertEqual(type(err.exception), ValueError)
+        self.assertEqual(err.exception.args[0], "input base must be >= 2")
 
     def test_negative_digit(self):
-        with self.assertRaisesWithMessage(ValueError):
+        with self.assertRaises(ValueError) as err:
             rebase(2, [1, -1, 1, 0, 1, 0], 10)
+        self.assertEqual(type(err.exception), ValueError)
+        self.assertEqual(
+            err.exception.args[0], "all digits must satisfy 0 <= d < input base"
+        )
 
     def test_invalid_positive_digit(self):
-        with self.assertRaisesWithMessage(ValueError):
+        with self.assertRaises(ValueError) as err:
             rebase(2, [1, 2, 1, 0, 1, 0], 10)
+        self.assertEqual(type(err.exception), ValueError)
+        self.assertEqual(
+            err.exception.args[0], "all digits must satisfy 0 <= d < input base"
+        )
 
     def test_output_base_is_one(self):
-        with self.assertRaisesWithMessage(ValueError):
+        with self.assertRaises(ValueError) as err:
             rebase(2, [1, 0, 1, 0, 1, 0], 1)
+        self.assertEqual(type(err.exception), ValueError)
+        self.assertEqual(err.exception.args[0], "output base must be >= 2")
 
     def test_output_base_is_zero(self):
-        with self.assertRaisesWithMessage(ValueError):
+        with self.assertRaises(ValueError) as err:
             rebase(10, [7], 0)
+        self.assertEqual(type(err.exception), ValueError)
+        self.assertEqual(err.exception.args[0], "output base must be >= 2")
 
     def test_output_base_is_negative(self):
-        with self.assertRaisesWithMessage(ValueError):
+        with self.assertRaises(ValueError) as err:
             rebase(2, [1], -7)
+        self.assertEqual(type(err.exception), ValueError)
+        self.assertEqual(err.exception.args[0], "output base must be >= 2")
 
     def test_both_bases_are_negative(self):
-        with self.assertRaisesWithMessage(ValueError):
+        with self.assertRaises(ValueError) as err:
             rebase(-2, [1], -7)
+        self.assertEqual(type(err.exception), ValueError)
+        self.assertEqual(err.exception.args[0], "input base must be >= 2")
 
     # Utility functions
     def assertRaisesWithMessage(self, exception):
