@@ -1,19 +1,23 @@
 import math
 from typing import Tuple
 
+
 class ComplexNumber:
-    pass  ## Trick
+    pass  # Trick
+
 
 class ComplexNumber:
     def __init__(self, real, imaginary):
         self.re = real
         self.im = imaginary
 
-    def real(self):
-        return self.re
-
-    def imaginary(self):
-        return self.im
+    def __getattr__(self, attr):
+        if attr == 'imaginary':
+            return self.im
+        elif attr == 'real':
+            return self.re
+        else:
+            raise AttributeError(f"{attr} not implemented yet?")
 
     def __eq__(self, other: ComplexNumber) -> bool:
         return self.re == other.re and self.im == other.im

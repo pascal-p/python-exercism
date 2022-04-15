@@ -3,7 +3,9 @@ import math
 
 import unittest
 
-from complex_numbers import ComplexNumber
+from complex_numbers import (
+    ComplexNumber,
+)
 
 # Tests adapted from `problem-specifications//canonical-data.json`
 
@@ -13,24 +15,24 @@ class ComplexNumbersTest(unittest.TestCase):
     # Real part
 
     def test_real_part_of_a_purely_real_number(self):
-        self.assertEqual(ComplexNumber(1, 0).real(), 1)
+        self.assertEqual(ComplexNumber(1, 0).real, 1)
 
     def test_real_part_of_a_purely_imaginary_number(self):
-        self.assertEqual(ComplexNumber(0, 1).real(), 0)
+        self.assertEqual(ComplexNumber(0, 1).real, 0)
 
     def test_real_part_of_a_number_with_real_and_imaginary_part(self):
-        self.assertEqual(ComplexNumber(1, 2).real(), 1)
+        self.assertEqual(ComplexNumber(1, 2).real, 1)
 
     # Imaginary part
 
     def test_imaginary_part_of_a_purely_real_number(self):
-        self.assertEqual(ComplexNumber(1, 0).imaginary(), 0)
+        self.assertEqual(ComplexNumber(1, 0).imaginary, 0)
 
     def test_imaginary_part_of_a_purely_imaginary_number(self):
-        self.assertEqual(ComplexNumber(0, 1).imaginary(), 1)
+        self.assertEqual(ComplexNumber(0, 1).imaginary, 1)
 
     def test_imaginary_part_of_a_number_with_real_and_imaginary_part(self):
-        self.assertEqual(ComplexNumber(1, 2).imaginary(), 2)
+        self.assertEqual(ComplexNumber(1, 2).imaginary, 2)
 
     def test_imaginary_unit(self):
         self.assertEqual(
@@ -108,12 +110,12 @@ class ComplexNumbersTest(unittest.TestCase):
         self.assertEqual(abs(ComplexNumber(-5, 0)), 5)
 
     def test_absolute_value_of_a_purely_imaginary_number_with_positive_imaginary_part(
-        self
+        self,
     ):
         self.assertEqual(abs(ComplexNumber(0, 5)), 5)
 
     def test_absolute_value_of_a_purely_imaginary_number_with_negative_imaginary_part(
-        self
+        self,
     ):
         self.assertEqual(abs(ComplexNumber(0, -5)), 5)
 
