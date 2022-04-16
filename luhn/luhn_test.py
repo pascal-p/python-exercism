@@ -1,8 +1,10 @@
 import unittest
 
-from luhn import Luhn
+from luhn import (
+    Luhn,
+)
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.7.0
+# Tests adapted from `problem-specifications//canonical-data.json`
 
 
 class LuhnTest(unittest.TestCase):
@@ -11,8 +13,6 @@ class LuhnTest(unittest.TestCase):
 
     def test_a_single_zero_is_invalid(self):
         self.assertIs(Luhn("0").valid(), False)
-        self.assertIs(Luhn("0  ").valid(), False)
-        self.assertIs(Luhn("  0").valid(), False)
 
     def test_a_simple_valid_sin_that_remains_valid_if_reversed(self):
         self.assertIs(Luhn("059").valid(), True)
@@ -22,7 +22,6 @@ class LuhnTest(unittest.TestCase):
 
     def test_a_valid_canadian_sin(self):
         self.assertIs(Luhn("055 444 285").valid(), True)
-        self.assertIs(Luhn("046 454 286").valid(), True)
 
     def test_invalid_canadian_sin(self):
         self.assertIs(Luhn("055 444 286").valid(), False)
@@ -38,8 +37,6 @@ class LuhnTest(unittest.TestCase):
 
     def test_valid_number_with_an_odd_number_of_spaces(self):
         self.assertIs(Luhn("234 567 891 234").valid(), True)
-        self.assertIs(Luhn("4539 3195 0343 6467").valid(), True)
-        self.assertIs(Luhn("8273 1232 7352 0869").valid(), True)
 
     def test_valid_strings_with_a_non_digit_added_at_the_end_become_invalid(self):
         self.assertIs(Luhn("059a").valid(), False)
@@ -49,13 +46,6 @@ class LuhnTest(unittest.TestCase):
 
     def test_valid_strings_with_symbols_included_become_invalid(self):
         self.assertIs(Luhn("055# 444$ 285").valid(), False)
-        self.assertIs(Luhn("055# 444$ 285").valid(), False)
-        self.assertIs(Luhn("055-444-285").valid(), False)
-        self.assertIs(Luhn("046a 454 286").valid(), False)
-
-    def test_valid_strings_with_no_space(self):
-        self.assertIs(Luhn("4539319503436467").valid(), True)
-        self.assertIs(Luhn("8273123273520869").valid(), True)
 
     def test_single_zero_with_space_is_invalid(self):
         self.assertIs(Luhn(" 0").valid(), False)
