@@ -1,82 +1,59 @@
 import unittest
 
-from hamming import distance, distance_v1, distance_v2
+from hamming import (
+    distance, distance_v1, distance_v2
+)
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v2.3.0
+# Tests adapted from `problem-specifications//canonical-data.json`
+
 LIST = [distance, distance_v1, distance_v2]
+
 
 class HammingTest(unittest.TestCase):
     def test_empty_strands(self):
-        _exp = 0
-        for fn in LIST:
-            self.assertEqual(fn("", ""), _exp,
-                             f"{fn.__name__} should return {_exp} in this case")
+        self.assertEqual(distance("", ""), 0)
 
     def test_single_letter_identical_strands(self):
-        _exp = 0
-        for fn in LIST:
-            self.assertEqual(fn("A", "A"), _exp,
-                             f"{fn.__name__} should return {_exp} in this case")
+        self.assertEqual(distance("A", "A"), 0)
 
     def test_single_letter_different_strands(self):
-        _exp = 1
-        for fn in LIST:
-            self.assertEqual(fn("G", "T"), _exp,
-                             f"{fn.__name__} should return {_exp} in this case")
+        self.assertEqual(distance("G", "T"), 1)
 
     def test_long_identical_strands(self):
-        _exp = 0
-        for fn in LIST:
-            self.assertEqual(fn("GGACTGAAATCTG", "GGACTGAAATCTG"), _exp,
-                             f"{fn.__name__} should return {_exp} in this case")
+        self.assertEqual(distance("GGACTGAAATCTG", "GGACTGAAATCTG"), 0)
 
     def test_long_different_strands(self):
-        _exp = 9
-        for fn in LIST:
-            self.assertEqual(fn("GGACGGATTCTG", "AGGACGGATTCT"), _exp,
-                             f"{fn.__name__} should return {_exp} in this case")
+        self.assertEqual(distance("GGACGGATTCTG", "AGGACGGATTCT"), 9)
 
-    def test_long_different_strands(self):
-        _exp = 94
+    def test_long_different_strands2(self):
         for fn in LIST:
-            self.assertEqual(fn("ATACCTACCGGTACGGGTTTACACATGAGGTTGTTGCCCTTTCAATCTTTCAAGCTTCCTCCGGGCAATTCATCCGAGTTCGTGACGATACTCCGGAATTTAAGGCCCTCTTCCGTTCGTGAGGCAGA",
-                                "TCCGTCAAGAATCCACCAGCCAACATCCTGCCTCCAGTAGTAAAAGCTAGTCCATGGCTGAGGGAACTCGGTTATAGGAACGATCAACTACGTGTCCGCGTTCCGATCCGCACTGTCCGATAATGACA"), _exp,
-                             f"{fn.__name__} should return {_exp} in this case")
+            self.assertEqual(
+                fn("ATACCTACCGGTACGGGTTTACACATGAGGTTGTTGCCCTTTCAATCTTTCAAGCTTCCTCCGGGCAATTCATCCGAGTTCGTGACGATACTCCGGAATTTAAGGCCCTCTTCCGTTCGTGAGGCAGA", "TCCGTCAAGAATCCACCAGCCAACATCCTGCCTCCAGTAGTAAAAGCTAGTCCATGGCTGAGGGAACTCGGTTATAGGAACGATCAACTACGTGTCCGCGTTCCGATCCGCACTGTCCGATAATGACA"), 94)
 
-    def test_very_long_diff_strands(self):
-        _exp = 742
+    def test_very_long_diff_strands3(self):
         for fn in LIST:
             self.assertEqual(fn("GTTCCAGGAGTTGAAGTTCGTCACCAGTCGAAGTTCCGCGTTTATATTCTCCCGTAAACGAACCAAGATGTGTTGCACGACCCCATACCGGGTCCACTCATACCCCACAGCAAGGGTTCTACAGTCCATGAGCACACAGCCCCAAGTCAGTTTCAATTCCACACTGAGATTAAGTAACTCTATTACTGCGCTGTTCAACATCGCAGAGGCACCAAAATCTCAACTGTCGGGCAGGACAGGATCCACATACTACTGAGTCCTATCAGACCTTGTTCTAACCCCGATGTGCCAAACCTTCTGGGACTGAATTCATCTGCTGCAAGTTTAGGAGGCGATTAGGACAACCGATCTCCCCGAAGGATTCTAGCTCTATGATCGGCTTTGATCCCCAAGAGGCTCAGGTGCTTAATGGACATGCGGGGTATAACGTCGAAGATTATGATTATCGTTAAGTTGTGCGCTTGCCTGTTCACGGACGACGCTCACGCGTCTCTCAGGCTTCCTTCATCGCCGGGAGGACGGGCCGTGTTACATGGCTAAGGTCTATTACTTATGTCGAAGATTCATGTTTTTAGTAGCGTGAACCTGGAGACTCATGGACTCGAAACCAATATCATACGTCAAGGTTCTAGGCCGTCACCTGGTGCTGATGTGAATAGCCATACGGCAAACGCAGTACCGTTTCCACTCAGCAGACTTGACGAAAGAGCTCCTCCAGATGGTCTCTGTTCGTAGCACGTTGGCGGTTAAGGAGTCCGAGGTTGTAGATCGTATACTAATTCGGCATTTCATAGGGTCCCCGATCTTAAGCAGTCTAACCCACACGTGGTTCCTTGGAGGTACCCTTAGTTCCGTCCAGCTGGCACGGCTGCTAGCATCGATAGCATGTGTCCCTTTAGGTTCTGAGCGAGTCCGCGTCGCTCAAGTTTTACGGCGACTCCTTACGTTGAATACGCCTCGCACTAACTCAGGACCGGGAAGATAACGATGCGGATTTTGGGATGTCTTCGCGAGGGGGCTACGG",
-                                "CATAATCATCCTTGATGTTCTTTGCCTCGACGGAAGACTAAAGTTTCGTCGCCCACAATTAAGATGCTGATGGCTGGACCAACCATAGCTTAACGCCTAGGATTGCTTTGCTGTCACCAACTTCCGCGGGTGATCTGGCCAAGCTATCACAGTTGATTGTCTTCGTGCCAATTATAAAAAACTCGCTATGAATGCAATTGGCTCCTCTGGGCGTCGACCTTTTGCTCGATAGGGCGGTTAGTATTCAGGTCCTCGCTTCCTCTACCAGCACACGGGCTACGCCGGCTGCATATCATCGGGTCAGGGTATTTGTCGCCTCTCTGGCGCAGAATGTCATACATACGTCTACGACTGACTCGGCCGGTCGCATTGTTTACGGACCCGACGTCCAAGTACGATAACCCCACGCGCGTACGCCAGCAACTATTGATCCAGCTTTATTAAGGTAGGTGGGCGCATTCGCACCCCTCTTAGTAATACCATCTAGAGGACCTCGGATGGGTCTTCCTGTACTTAATTACTTTAATCGATACCTTATTTCGCTAACGACTCGTTGAATTCGTTTTCACCGTCGGCCGTGGACTTCTCGTTACGCCCTTACCCTTTGTGTAGACGATTCCCAGCCATGGACCATCAGTATAGGGCGTGCTGCAGCCTTAGCAGCTATTATGGCGCCTCCGGTAGCAAGATAGAACTATTGCACAAAGAACGGCTATACGCCGAACCATGATTCTTGTGACCAAACCTACAAGGGCGCCTAAGAGCAAACTAGGATTGTGGTTTTTTAGTCGTAAAAGGCTAGCTTCTCGGATTTTACTTTCTCTACGTAACCGTTCGTCCCCTTTCGTATCTTCAAAGTTAGCCAACTGCGCGAGTAGTTAAACTCGCCGGGGCTATTGCAAATGAAGTAATCTTGTATATAGTTCAGAGCTAGTTAATGGTAGTCAGTGGCCGAAGTTTTCGCCTCAGACGAGAATACTAGCACCGATATAAATAGGGGCCTTGATACTTGGAGTGGCGAGCG"), _exp,
-                             f"{fn.__name__} should return {_exp} in this case")
+                                "CATAATCATCCTTGATGTTCTTTGCCTCGACGGAAGACTAAAGTTTCGTCGCCCACAATTAAGATGCTGATGGCTGGACCAACCATAGCTTAACGCCTAGGATTGCTTTGCTGTCACCAACTTCCGCGGGTGATCTGGCCAAGCTATCACAGTTGATTGTCTTCGTGCCAATTATAAAAAACTCGCTATGAATGCAATTGGCTCCTCTGGGCGTCGACCTTTTGCTCGATAGGGCGGTTAGTATTCAGGTCCTCGCTTCCTCTACCAGCACACGGGCTACGCCGGCTGCATATCATCGGGTCAGGGTATTTGTCGCCTCTCTGGCGCAGAATGTCATACATACGTCTACGACTGACTCGGCCGGTCGCATTGTTTACGGACCCGACGTCCAAGTACGATAACCCCACGCGCGTACGCCAGCAACTATTGATCCAGCTTTATTAAGGTAGGTGGGCGCATTCGCACCCCTCTTAGTAATACCATCTAGAGGACCTCGGATGGGTCTTCCTGTACTTAATTACTTTAATCGATACCTTATTTCGCTAACGACTCGTTGAATTCGTTTTCACCGTCGGCCGTGGACTTCTCGTTACGCCCTTACCCTTTGTGTAGACGATTCCCAGCCATGGACCATCAGTATAGGGCGTGCTGCAGCCTTAGCAGCTATTATGGCGCCTCCGGTAGCAAGATAGAACTATTGCACAAAGAACGGCTATACGCCGAACCATGATTCTTGTGACCAAACCTACAAGGGCGCCTAAGAGCAAACTAGGATTGTGGTTTTTTAGTCGTAAAAGGCTAGCTTCTCGGATTTTACTTTCTCTACGTAACCGTTCGTCCCCTTTCGTATCTTCAAAGTTAGCCAACTGCGCGAGTAGTTAAACTCGCCGGGGCTATTGCAAATGAAGTAATCTTGTATATAGTTCAGAGCTAGTTAATGGTAGTCAGTGGCCGAAGTTTTCGCCTCAGACGAGAATACTAGCACCGATATAAATAGGGGCCTTGATACTTGGAGTGGCGAGCG"), 742)
 
     def test_disallow_first_strand_longer(self):
-        for fn in LIST:
-            with self.assertRaisesWithMessage(ValueError,
-                                              f"{fn.__name__} should raise exception"):
-                fn("AATG", "AAA")
+        with self.assertRaisesWithMessage(ValueError):
+            distance("AATG", "AAA")
 
     def test_disallow_second_strand_longer(self):
-        for fn in LIST:
-            with self.assertRaisesWithMessage(ValueError,
-                                              f"{fn.__name__} should raise exception"):
-                fn("ATA", "AGTG")
+        with self.assertRaisesWithMessage(ValueError):
+            distance("ATA", "AGTG")
 
     def test_disallow_left_empty_strand(self):
-        for fn in LIST:
-            with self.assertRaisesWithMessage(ValueError,
-                                              f"{fn.__name__} should raise exception"):
-                fn("", "G")
+        with self.assertRaisesWithMessage(ValueError):
+            distance("", "G")
 
     def test_disallow_right_empty_strand(self):
-        for fn in LIST:
-            with self.assertRaisesWithMessage(ValueError,
-                                              f"{fn.__name__} should raise exception"):
-                fn("G", "")
+        with self.assertRaisesWithMessage(ValueError):
+            distance("G", "")
 
     # Utility functions
-    def assertRaisesWithMessage(self, exception, msg=None):
-        return self.assertRaisesRegex(exception, r".+", msg=msg)
+    def assertRaisesWithMessage(self, exception):
+        return self.assertRaisesRegex(exception, r".+")
 
 
 if __name__ == "__main__":

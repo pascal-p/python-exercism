@@ -9,7 +9,7 @@ import functools
 def check_len(fn):
     @functools.wraps(fn)
     def wrapped_fn(*args, **kwargs):
-        (strand_a, strand_b) = args
+        (strand_a, strand_b) = args;
         if len(strand_a) != len(strand_b):
             raise ValueError('strands must be of same length')
         if strand_a == '' and strand_b == '':
