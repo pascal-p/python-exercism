@@ -1,8 +1,11 @@
 import unittest
 
-from atbash_cipher import decode, encode
+from atbash_cipher import (
+    decode,
+    encode,
+)
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.2.0
+# Tests adapted from `problem-specifications//canonical-data.json`
 
 
 class AtbashCipherTest(unittest.TestCase):
