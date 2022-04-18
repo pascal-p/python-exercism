@@ -1,8 +1,10 @@
 import unittest
 
-from protein_translation import proteins
+from protein_translation import (
+    proteins,
+)
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v1.1.1
+# Tests adapted from `problem-specifications//canonical-data.json`
 
 
 class ProteinTranslationTest(unittest.TestCase):
@@ -129,7 +131,8 @@ class ProteinTranslationTest(unittest.TestCase):
     def test_translation_exception_if_non_defined_codon(self):
         value = "UGGUGUUALOL"
         with self.assertRaises(KeyError):
-            proteins(value)         
+            proteins(value)
+
 
 if __name__ == "__main__":
     unittest.main()
