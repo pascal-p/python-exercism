@@ -1,10 +1,13 @@
 import unittest
 
-from affine_cipher import decode, encode
+from affine_cipher import (
+    decode,
+    encode,
+)
 
-# Tests adapted from `problem-specifications//canonical-data.json` @ v2.0.0
+# Tests adapted from `problem-specifications/canonical-data.json`
 
-LongStr =  """
+LongStr = """
 Chor. Two households, both alike in dignity,
 In fair Verona, where we lay our scene,
 From ancient grudge break to new mutiny,
@@ -21,14 +24,10 @@ The which if you with patient ears attend,
 What here shall miss, our toil shall strive to mend.
 """
 
-class AffineCipherTest(unittest.TestCase):
 
-    ## Encode
+class AffineCipherTest(unittest.TestCase):
     def test_encode_yes(self):
         self.assertEqual(encode("yes", 5, 7), "xbt")
-
-    def test_encode_test(self):
-        self.assertEqual(encode("Test", 5, 7), "ybty")
 
     def test_encode_no(self):
         self.assertEqual(encode("no", 15, 18), "fu")
@@ -48,14 +47,8 @@ class AffineCipherTest(unittest.TestCase):
         )
 
     def test_encode_deep_thought(self):
-        self.assertEqual(encode("Truth is fiction.", 5, 17), "iynia fdqfb ifje")
-
-    def test_encode_deep_thought_nospc(self):
-        self.assertEqual(encode("Truthisfiction.", 5, 17), "iynia fdqfb ifje")
-
-    def test_encode_thought(self):
-        self.assertEqual(encode("Free Will is a delusion. Face it", 7, 17),
-                         "agttp vqqvn rmtqb nvlea rftvu")
+        self.assertEqual(encode("Truth is fiction.", 5, 17),
+                         "iynia fdqfb ifje")
 
     def test_encode_all_the_letters(self):
         self.assertEqual(
@@ -79,13 +72,8 @@ class AffineCipherTest(unittest.TestCase):
         with self.assertRaisesWithMessage(ValueError):
             encode("This is a test.", 6, 17)
 
-
-    ## Decode
     def test_decode_exercism(self):
         self.assertEqual(decode("tytgn fjr", 3, 7), "exercism")
-
-    def test_decode_test(self):
-        self.assertEqual(decode("ybty", 5, 7), "test")
 
     def test_decode_a_sentence(self):
         self.assertEqual(
@@ -94,11 +82,18 @@ class AffineCipherTest(unittest.TestCase):
         )
 
     def test_decode_numbers(self):
-        self.assertEqual(decode("odpoz ub123 odpoz ub", 25, 7), "testing123testing")
+        self.assertEqual(decode("odpoz ub123 odpoz ub",
+                         25, 7), "testing123testing")
 
     def test_decode_all_the_letters(self):
         self.assertEqual(
             decode("swxtj npvyk lruol iejdc blaxk swxmh qzglf", 17, 33),
+            "thequickbrownfoxjumpsoverthelazydog",
+        )
+
+    def test_decode_with_no_spaces_in_input(self):
+        self.assertEqual(
+            decode("swxtjnpvyklruoliejdcblaxkswxmhqzglf", 17, 33),
             "thequickbrownfoxjumpsoverthelazydog",
         )
 
@@ -128,10 +123,6 @@ class AffineCipherTest(unittest.TestCase):
     def test_decode_with_a_not_coprime_to_m(self):
         with self.assertRaisesWithMessage(ValueError):
             decode("Test", 13, 5)
-
-    def test_decode_with_a_not_coprime_to_m_2(self):
-        with self.assertRaisesWithMessage(ValueError):
-            decode("ybty", 18, 13)
 
     # Utility functions
     def assertRaisesWithMessage(self, exception):
