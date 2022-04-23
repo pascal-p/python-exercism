@@ -1,22 +1,26 @@
-from typing import Union, List, Callable
+from typing import Union, List, Callable, Dict
 
 Number = Union[int, float]
 Vector = List
 
 
+class ComputeCell:
+    pass  # trick to get the type for the observer
+
+
 class Cell:
-    def __init__(self, init_val):
+    def __init__(self, init_val: Number):
         self._id = id(self)
         self._value = init_val
         self._observers = set()
 
-    def add_observer(self, observer):
+    def add_observer(self, observer: ComputeCell):
         self._observers.add(observer)
 
-    def remove_observer(self, observer):
+    def remove_observer(self, observer: ComputeCell):
         self._observers.remove(observer)
 
-    def notify_observers(self, changed):
+    def notify_observers(self, changed: Dict):
         for obs in self._observers:
             obs.re_calc(changed)  # NOTE observers are ComputeCell instances
 
@@ -49,11 +53,11 @@ class InputCell(Cell):
             self.notify_observers(changed)  # propagate...
             for cell, orig_val in changed.items():
                 if cell.value != orig_val:
-                    cell.call_callbacks()
+                    cell.call_callbacks()  # as the cell's value actually changed, invoke callback
 
 
 class ComputeCell(Cell):
-    def __init__(self, inputs: Vector, compute_fn: Callable):
+    def __init__(self, inputs: Vector[Cell], compute_fn: Callable):
         self._inputs = inputs
         self._fn = compute_fn
         self._callbacks = set()
@@ -71,7 +75,7 @@ class ComputeCell(Cell):
     def calc(self):
         return self._fn([x.value for x in self._inputs])
 
-    def re_calc(self, changed):
+    def re_calc(self, changed: Dict):
         val = self.calc()  # calc new value - did it change?
         if self._value != val:  # yes
             changed.setdefault(self, self._value)  # current value
