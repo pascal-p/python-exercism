@@ -1,6 +1,8 @@
 import unittest
 
-from satellite import tree_from_traversals
+from satellite import (
+    tree_from_traversals,
+)
 
 # Tests adapted from `problem-specifications//canonical-data.json`
 
@@ -31,55 +33,6 @@ class SatelliteTest(unittest.TestCase):
                 "v": "x",
                 "l": {"v": "f", "l": {}, "r": {}},
                 "r": {"v": "r", "l": {}, "r": {}},
-            },
-        }
-        self.assertEqual(tree_from_traversals(preorder, inorder), expected)
-
-    def test_tree_with_many_more_items1(self):
-        preorder = ['f', 'b', 'a', 'd', 'c', 'e', 'g', 'i', 'h']
-        inorder = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i']
-        #
-        #
-        # . . . . F . . . .
-        #      /    \
-        # . B . . .  G
-        # /  \        \
-        # A . D . . .  I
-        #    / \      /
-        # . C . E . H
-        #
-        expected = {
-            "v": "f",
-            "l": {"v": "b",
-                  "l": {"v": "a", "l": {}, "r": {}},
-                  "r": {"v": "d",
-                        "l": {"v": "c", "l": {}, "r": {}},
-                        "r": {"v": "e", "l": {}, "r": {}}}},
-            "r": {
-                "v": "g",
-                "l": {},
-                "r": {"v": "i",
-                      "l": {"v": "h", "l": {}, "r": {}},
-                      "r": {}},
-            },
-        }
-        self.assertEqual(tree_from_traversals(preorder, inorder), expected)
-
-    def test_tree_with_many_more_items2(self):
-        preorder = ['+', '*', 'a', '-', 'b', 'c', '/', 'd', 'e']
-        inorder = ['a', '*', 'b',  '-', 'c', '+',  'd', '/',  'e']
-        expected = {
-            "v": "+",
-            "l": {"v": "*",
-                  "l": {"v": "a", "l": {}, "r": {}},
-                  "r": {"v": "-",
-                        "l": {"v": "b", "l": {}, "r": {}},
-                        "r": {"v": "c", "l": {}, "r": {}}},
-                  },
-            "r": {
-                "v": "/",
-                "l": {"v": "d", "l": {}, "r": {}},
-                "r": {"v": "e", "l": {}, "r": {}},
             },
         }
         self.assertEqual(tree_from_traversals(preorder, inorder), expected)
