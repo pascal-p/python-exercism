@@ -14,16 +14,16 @@ class HangmanTests(unittest.TestCase):
 
     def test_initially_no_letters_are_guessed(self):
         game = Hangman('foo')
-
         self.assertEqual(game.get_masked_word(), '___')
 
     def test_after_10_failures_the_game_is_over(self):
         game = Hangman('foo')
-
         for i in range(10):
             game.guess('x')
 
         self.assertEqual(game.get_status(), hangman.STATUS_LOSE)
+        print("OK")
+
         with self.assertRaises(ValueError) as err:
             game.guess('x')
         self.assertEqual(type(err.exception), ValueError)
@@ -95,3 +95,30 @@ class HangmanTests(unittest.TestCase):
         self.assertEqual(game.remaining_guesses, 0)
         self.assertEqual(game.get_status(), hangman.STATUS_WIN)
         self.assertEqual(game.get_masked_word(), 'aaa')
+
+    def test_guess_is_case_insensitive(self):
+        game = Hangman('Hello')
+
+        game.guess('b')
+        self.assertEqual(game.get_status(), hangman.STATUS_ONGOING)
+        self.assertEqual(game.remaining_guesses, 8)
+        self.assertEqual(game.get_masked_word(), '_____')
+
+        game.guess('E')
+        self.assertEqual(game.get_status(), hangman.STATUS_ONGOING)
+        self.assertEqual(game.remaining_guesses, 8)
+        self.assertEqual(game.get_masked_word(), '_e___')
+
+        game.guess('l')
+        self.assertEqual(game.get_status(), hangman.STATUS_ONGOING)
+        self.assertEqual(game.remaining_guesses, 8)
+        self.assertEqual(game.get_masked_word(), '_ell_')
+
+        game.guess('O')
+        self.assertEqual(game.get_status(), hangman.STATUS_ONGOING)
+        self.assertEqual(game.remaining_guesses, 8)
+        self.assertEqual(game.get_masked_word(), '_ello')
+
+        game.guess('h')
+        self.assertEqual(game.get_status(), hangman.STATUS_WIN)
+        self.assertEqual(game.get_masked_word(), 'hello')
