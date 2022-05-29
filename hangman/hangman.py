@@ -24,14 +24,7 @@ class Hangman:
         #
         ixes = []
         if char not in self._guessed_letters:
-            ixes = self._findall(char)
-            for ix in ixes:
-                mw = self._masked_word
-                self._masked_word = "".join([
-                    mw[0:ix], char, mw[ix+1:]
-                ])
-            if self._masked_word == self._word:
-                self.status = STATUS_WIN
+            ixes = self._update_masked_word(char)
         if len(ixes) == 0:
             self.remaining_guesses -= 1
         self._guessed_letters.add(char)
@@ -43,7 +36,21 @@ class Hangman:
     def get_status(self):
         return self.status
 
+    #
+    # Private helpers
+    #
     def _findall(self, char):
         return [
             ix for ix, ch in enumerate(self._word) if ch == char
         ]
+
+    def _update_masked_word(self, char):
+        ixes = self._findall(char)
+        for ix in ixes:
+            mw = self._masked_word
+            self._masked_word = "".join([
+                mw[0:ix], char, mw[ix+1:]
+            ])
+        if self._masked_word == self._word:
+            self.status = STATUS_WIN
+        return ixes
