@@ -18,13 +18,12 @@ class Hangman:
         char = char.lower()
         if self.remaining_guesses < 0 or self.status != STATUS_ONGOING:
             raise ValueError("The game has already ended.")
-        #
         if self.remaining_guesses == 0:
             self.status = STATUS_LOSE
+            # will keep going as we can win on the last guess
         #
-        ixes = []
-        if char not in self._guessed_letters:
-            ixes = self._update_masked_word(char)
+        ixes = self._update_masked_word(char) if char not in self._guessed_letters \
+            else []
         if len(ixes) == 0:
             self.remaining_guesses -= 1
         self._guessed_letters.add(char)

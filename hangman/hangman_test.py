@@ -22,8 +22,6 @@ class HangmanTests(unittest.TestCase):
             game.guess('x')
 
         self.assertEqual(game.get_status(), hangman.STATUS_LOSE)
-        print("OK")
-
         with self.assertRaises(ValueError) as err:
             game.guess('x')
         self.assertEqual(type(err.exception), ValueError)
@@ -89,14 +87,13 @@ class HangmanTests(unittest.TestCase):
 
     def test_winning_on_last_guess_still_counts_as_a_win(self):
         game = Hangman('aaa')
-        for ch in 'bcdefghij':
+        for ch in 'bcdefghija':
             game.guess(ch)
-        game.guess('a')
         self.assertEqual(game.remaining_guesses, 0)
         self.assertEqual(game.get_status(), hangman.STATUS_WIN)
         self.assertEqual(game.get_masked_word(), 'aaa')
 
-    def test_guess_is_case_insensitive(self):
+    def test_game_is_case_insensitive(self):
         game = Hangman('Hello')
 
         game.guess('b')
